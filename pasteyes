@@ -17,7 +17,7 @@ do
 		"CYBERCRAFTMACHINE", "SUMMERFUSE", "LOSTRADERS", "HAUNTEDFUSE" }
  
 	local MUTATIONS = { "GOLD", "DIAMOND", "RAINBOW", "BLOODROT", "CANDY", "LAVA", "GALAXY",
-	"YINYANG", "RADIOACTIVE", "CURSED", "DIVINE", "CYBER", "PHANTOM", "CRYSTAL", "ECLIPSE" }
+		"YINYANG", "RADIOACTIVE", "CURSED", "DIVINE", "CYBER", "PHANTOM", "CRYSTAL", "ECLIPSE" }
 	local SEQUENCES = { machine = MACHINES, mutation = MUTATIONS, trait = { "LIGHTNING" } }
  
 	local function tokenize(text)
@@ -95,6 +95,7 @@ do
 	fact("ECLIPSE", "highest multiplier|biggest multiplier|best multiplier|highest multi")
 	fact("GOLD", "lowest mutation multiplier|lowest multiplier|smallest multiplier|most common mutation|common mutation")
 	fact("DIAMOND", "second most common mutation")
+	fact("BLOODROT", "first limited mutation|first limited event|first event mutation")
 	fact("LAVA", "molten|molten mutation|orange|orange mutation|turns orange")
 	fact("LIGHTNING", "lightning|lightning trait|struck by lightning|trait from lightning|first trait created")
 	fact(lastMutation, "best mutation|top mutation|strongest mutation|most powerful mutation|highest mutation")
@@ -106,14 +107,11 @@ do
 	fact("CYBER", "cyber mutation|black and blue|turns black and blue")
 	fact("CANDY", "candy mutation|pink|pink mutation|turns pink")
 	fact("BLOODROT", "bloodrot|bloodrot mutation|dark red")
-	fact("BLOODROT", "first limited mutation|first limited event|first event mutation")
-
  
 	fact("EXTINCTDRAGON", "new dragon|newest dragon|latest dragon|last dragon|recent dragon|extinct dragon|new dragon name")
 	fact("REAPERBASE", "new base|newest base|latest base|last base|new robux base|robux base|new base with robux|new base i added|base i added|new base for robux|newest robux base")
-	rule("PLANTBROS", "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret", "machine|fuse")
 	fact("PLANTBROS", "best brainrot in the new machine|best brainrot in the last machine|best brainrot in the latest machine|best brainrot in the newest machine|new machine best brainrot|last machine best brainrot")
- 
+
 	local RULES = {}
 	local function rule(answer, ...)
 		local groups = {}
@@ -128,6 +126,7 @@ do
 	local NEWW = "new|newest|latest|last|recent|newer|newly"
  
 	rule("PLANTBROS", "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret", NEWW .. "|haunted|19th|nineteenth", "machine|fuse")
+	rule("PLANTBROS", "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret", "machine|machines|fuse")
 	rule("EXTINCTDRAGON", NEWW, "dragon|dragons")
 	rule("EXTINCTDRAGON", "extinct", "dragon|dragons")
 	rule("REAPERBASE", NEWW, "base|bases")
@@ -251,12 +250,69 @@ do
 	end
  
 	local MAXSPAN = 6
- 
+
+	local MACHINE_RANKING = { "PLANTBROS", "PHOENIX" }
+	
+	local BRAINROT_WORDS = { brainrot = true, brainrots = true, secret = true, secrets = true }
+	local MACHINE_WORDS = { machine = true, machines = true, fuse = true }
+	local RANK_FILLER = {
+		the = true, a = true, my = true, best = true, top = true, highest = true,
+		rarest = true, strongest = true, richest = true, number = true, no = true,
+		rank = true, ranked = true, tier = true,
+	}
+	
+	local function rankOf(t)
+		local o = ordIndex(t) -- 2nd, second, third...
+		if o then return o end
+		if t:match("^%d+$") then return tonumber(t) end -- 2
+		return NUMBER_WORDS[t] -- two
+	end
+	
+	-- Devuelve: respuesta | false (pregunta de ranking sin dato) | nil (no es de ranking)
+	local function matchRanked(tk)
+		local hasMachine = false
+		for _, t in ipairs(tk) do
+			if MACHINE_WORDS[t] then hasMachine = true break end
+		end
+	
+		for p, t in ipairs(tk) do
+			if BRAINROT_WORDS[t] then
+				local rank
+	
+				-- Antes de "brainrot": "2nd best brainrot", "the 2 best brainrot", "two brainrot"
+				for q = p - 1, math.max(1, p - 4), -1 do
+					local w = tk[q]
+					rank = rankOf(w)
+					if rank then break end
+					if not RANK_FILLER[w] then break end
+				end
+	
+				-- Después: "brainrot 2", "brainrot number 2" (sin confundir con "2 times")
+				if not rank then
+					local k = p + 1
+					if tk[k] == "number" or tk[k] == "no" then k += 1 end
+					local r = tk[k] and rankOf(tk[k])
+					if r and tk[k + 1] ~= "time" and tk[k + 1] ~= "times" then rank = r end
+				end
+	
+				if rank and rank <= 20 then
+					if rank == 1 and not hasMachine then return nil end -- "1st brainrot" suelto: que decida lo demás
+					return MACHINE_RANKING[rank] or false
+				end
+			end
+		end
+		return nil
+	end
+
 	local function solveClause(text)
 		local tk = tokenize(text)
 		local n = #tk
 		if n == 0 then return nil end
- 
+
+		local ranked = matchRanked(tk)
+		if ranked == false then return nil end -- ranking que aún no tienes cargado
+		if ranked then return string.rep(ranked, tailRepeat(tk)) end
+
 		local ruled = matchRule(tk)
 		if ruled then return string.rep(ruled, tailRepeat(tk)) end
  
