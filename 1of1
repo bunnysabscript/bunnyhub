@@ -1,0 +1,449 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local TS = game:GetService("TweenService")
+local LP = Players.LocalPlayer
+ 
+------------------------------------------------------------
+local prev = getgenv().KiwiOOO
+if prev then
+	if prev.gui and prev.gui.Parent then prev.gui:Destroy() end
+	for _, c in ipairs(prev.conns or {}) do pcall(function() c:Disconnect() end) end
+end
+ 
+local S = { enabled = true, selected = {}, conns = {}, forced = setmetatable({}, { __mode = "k" }) }
+if prev and prev.selected then
+	for k, v in pairs(prev.selected) do S.selected[k] = v end -- conserva tu lista al re-ejecutar
+end
+getgenv().KiwiOOO = S
+ 
+local function norm(s)
+	s = tostring(s or ""):lower()
+	s = s:gsub("[^%w]", "")
+	return s
+end
+ 
+------------------------------------------------------------
+-- LOGICA DE COINCIDENCIA
+------------------------------------------------------------
+-- ¿este texto corresponde a un brainrot escogido?
+function S.isSel(str)
+	local n = norm(str)
+	if n == "" then return false end
+	for k in pairs(S.selected) do
+		if n == k or (#k >= 5 and n:find(k, 1, true)) then return true end
+	end
+	return false
+end
+ 
+-- Revisa TODOS los textos de una tabla de datos (profundidad 2) sin necesitar saber los nombres de los campos
+function S.matchTable(t, depth)
+	depth = depth or 0
+	if type(t) ~= "table" or depth > 2 then return false end
+	local hit = false
+	pcall(function()
+		for _, v in pairs(t) do
+			local tv = typeof(v)
+			if tv == "string" then
+				if S.isSel(v) then
+					hit = true
+					return
+				end
+			elseif tv == "Instance" then
+				if S.isSel(v.Name) then
+					hit = true
+					return
+				end
+			elseif tv == "table" then
+				if S.matchTable(v, depth + 1) then
+					hit = true
+					return
+				end
+			end
+		end
+	end)
+	return hit
+end
+ 
+-- Revisa los textos visibles del overhead (TextLabels)
+function S.matchOverhead(root)
+	if not root then return false end
+	local hit = false
+	pcall(function()
+		for _, d in ipairs(root:GetDescendants()) do
+			if d:IsA("TextLabel") or d:IsA("TextButton") then
+				local t = tostring(d.Text or ""):gsub("<[^>]->", "")
+				if S.isSel(t) then
+					hit = true
+					return
+				end
+			end
+		end
+	end)
+	return hit
+end
+ 
+-- Intenta adivinar el nombre del brainrot de un overhead (para la lista SCAN)
+function S.guessName(root)
+	local fallback
+	pcall(function()
+		for _, d in ipairs(root:GetDescendants()) do
+			if d:IsA("TextLabel") or d:IsA("TextButton") then
+				local t = tostring(d.Text or ""):gsub("<[^>]->", "")
+				t = t:match("^%s*(.-)%s*$") or t
+				if t:find("%a") and not t:find("%$") and not t:find("/s") and #t <= 40 then
+					if d.Name:lower():find("name") then
+						fallback = t
+						return
+					end
+					fallback = fallback or t
+				end
+			end
+		end
+	end)
+	return fallback
+end
+ 
+-- Muestra el banner si "want"; si antes lo forzamos y ya no toca, lo deja como estaba
+function S.setBanner(banner, want)
+	pcall(function()
+		if want then
+			if S.forced[banner] == nil then S.forced[banner] = banner.Visible end
+			banner.Visible = true
+		elseif S.forced[banner] ~= nil then
+			banner.Visible = S.forced[banner]
+			S.forced[banner] = nil
+		end
+	end)
+end
+ 
+function S.applyBanner(banner)
+	local root = banner:FindFirstAncestorOfClass("BillboardGui") or banner.Parent
+	local want = S.enabled and root ~= nil and S.matchOverhead(root)
+	S.setBanner(banner, want)
+end
+ 
+function S.applyAll()
+	for _, inst in ipairs(Workspace:GetDescendants()) do
+		if inst.Name == "1OF1Banner" then S.applyBanner(inst) end
+	end
+end
+ 
+------------------------------------------------------------
+-- HOOKS (se instalan UNA sola vez)
+------------------------------------------------------------
+if not getgenv().KiwiOOO_Hooked then
+	local ok, err = pcall(function()
+		local BrainrotCard = require(ReplicatedStorage.Shared.BrainrotCard)
+		local OverheadController = require(ReplicatedStorage.Controllers.AnimalOverheadController)
+ 
+		local oldObserve
+		oldObserve = hookfunction(BrainrotCard.ObserveOneOfOne, function(record, callback)
+			local st = getgenv().KiwiOOO
+			if st then
+				st.lastRecord = record
+				if st.enabled and st.matchTable(record) then
+					return oldObserve(record, function(_)
+						callback(true)
+					end)
+				end
+			end
+			return oldObserve(record, callback)
+		end)
+ 
+		local originalPopulate
+		originalPopulate = hookfunction(OverheadController.Populate, function(self, data)
+			originalPopulate(self, data)
+			pcall(function()
+				local st = getgenv().KiwiOOO
+				if not st then return end
+				st.lastData = data
+				local overhead = data and data.Overhead
+				if not overhead then return end
+				local banner = overhead:FindFirstChild("1OF1Banner", true)
+				if not banner then return end
+				local want = st.enabled and (st.matchTable(data) or st.matchOverhead(overhead))
+				st.setBanner(banner, want)
+			end)
+		end)
+ 
+		-- banners que aparezcan despues (esperamos un momento a que el juego les ponga el texto)
+		Workspace.DescendantAdded:Connect(function(inst)
+			if inst.Name == "1OF1Banner" then
+				task.delay(0.25, function()
+					local st = getgenv().KiwiOOO
+					if st and inst.Parent then st.applyBanner(inst) end
+				end)
+			end
+		end)
+	end)
+	if ok then
+		getgenv().KiwiOOO_Hooked = true
+	else
+		warn("[KIWI-1OF1] No pude instalar los hooks:", err)
+	end
+end
+ 
+------------------------------------------------------------
+-- GUI (estilo Kiwi)
+------------------------------------------------------------
+local C = {
+	bg = Color3.fromRGB(11, 26, 17), card = Color3.fromRGB(15, 34, 22), soft = Color3.fromRGB(18, 42, 27),
+	lime = Color3.fromRGB(160, 230, 90), leaf = Color3.fromRGB(60, 175, 110),
+	text = Color3.fromRGB(235, 250, 235), muted = Color3.fromRGB(155, 190, 165),
+	off = Color3.fromRGB(32, 55, 40), red = Color3.fromRGB(255, 110, 120), dark = Color3.fromRGB(4, 14, 8),
+}
+local FT, FM = Enum.Font.GothamBold, Enum.Font.GothamMedium
+local TI = TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+ 
+local function mk(class, props, parent)
+	local o = Instance.new(class)
+	for k, v in pairs(props) do o[k] = v end
+	o.Parent = parent
+	return o
+end
+local function corner(p, r) return mk("UICorner", { CornerRadius = UDim.new(0, r or 10) }, p) end
+local function stroke(p, col, th, tr) return mk("UIStroke", { Color = col or C.lime, Thickness = th or 1, Transparency = tr or 0.5 }, p) end
+ 
+local gui = mk("ScreenGui", {
+	Name = "KiwiOneOfOne", ResetOnSpawn = false, IgnoreGuiInset = true, DisplayOrder = 999,
+	ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+}, nil)
+do
+	local parented = false
+	pcall(function()
+		if gethui then
+			gui.Parent = gethui()
+			parented = gui.Parent ~= nil
+		end
+	end)
+	if not parented then
+		pcall(function()
+			gui.Parent = game:GetService("CoreGui")
+			parented = gui.Parent ~= nil
+		end)
+	end
+	if not parented then gui.Parent = LP:WaitForChild("PlayerGui") end
+end
+S.gui = gui
+ 
+local panel = mk("Frame", {
+	Name = "Panel", Size = UDim2.fromOffset(280, 420), Position = UDim2.new(0, 14, 0.5, -210),
+	BackgroundColor3 = C.bg, BackgroundTransparency = 0.04, BorderSizePixel = 0, ClipsDescendants = true, ZIndex = 10,
+}, gui)
+corner(panel, 18)
+stroke(panel, C.lime, 1.5, 0.35)
+ 
+-- Header
+local header = mk("Frame", { Size = UDim2.new(1, 0, 0, 44), BackgroundTransparency = 1, ZIndex = 11 }, panel)
+mk("TextLabel", {
+	Position = UDim2.new(0, 14, 0, 6), Size = UDim2.new(1, -60, 0, 20), BackgroundTransparency = 1, Font = FT,
+	Text = "🐢 KIWI · 1/1 PICKER", TextSize = 15, TextColor3 = C.text, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 12,
+}, header)
+mk("TextLabel", {
+	Position = UDim2.new(0, 14, 0, 26), Size = UDim2.new(1, -60, 0, 14), BackgroundTransparency = 1, Font = FM,
+	Text = "elige a quien le sale el banner", TextSize = 10, TextColor3 = C.lime, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 12,
+}, header)
+local closeBtn = mk("TextButton", {
+	Size = UDim2.fromOffset(24, 24), Position = UDim2.new(1, -34, 0, 10), BackgroundColor3 = C.soft, Text = "×",
+	Font = FT, TextSize = 16, TextColor3 = C.text, AutoButtonColor = false, ZIndex = 13,
+}, header)
+corner(closeBtn, 12)
+closeBtn.MouseButton1Click:Connect(function()
+	S.enabled = false
+	S.applyAll() -- deja los banners como estaban
+	for _, c in ipairs(S.conns) do pcall(function() c:Disconnect() end) end
+	gui:Destroy()
+end)
+ 
+-- Switch maestro
+local master = mk("Frame", { Size = UDim2.new(1, -20, 0, 34), Position = UDim2.new(0, 10, 0, 50), BackgroundColor3 = C.card, BackgroundTransparency = 0.1, BorderSizePixel = 0, ZIndex = 12 }, panel)
+corner(master, 12)
+stroke(master, C.lime, 1, 0.5)
+mk("TextLabel", { Position = UDim2.new(0, 12, 0, 0), Size = UDim2.new(1, -70, 1, 0), BackgroundTransparency = 1, Font = FT, Text = "🥝  BANNER 1/1", TextSize = 13, TextColor3 = C.text, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 13 }, master)
+local track = mk("Frame", { Size = UDim2.fromOffset(40, 22), Position = UDim2.new(1, -52, 0.5, -11), BackgroundColor3 = C.lime, BorderSizePixel = 0, ZIndex = 13 }, master)
+corner(track, 11)
+local knob = mk("Frame", { Size = UDim2.fromOffset(16, 16), Position = UDim2.new(1, -19, 0.5, -8), BackgroundColor3 = C.dark, BorderSizePixel = 0, ZIndex = 14 }, track)
+corner(knob, 8)
+local masterHit = mk("TextButton", { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, Text = "", ZIndex = 15 }, master)
+masterHit.MouseButton1Click:Connect(function()
+	S.enabled = not S.enabled
+	TS:Create(track, TI, { BackgroundColor3 = S.enabled and C.lime or C.off }):Play()
+	TS:Create(knob, TI, {
+		Position = S.enabled and UDim2.new(1, -19, 0.5, -8) or UDim2.new(0, 3, 0.5, -8),
+		BackgroundColor3 = S.enabled and C.dark or C.text,
+	}):Play()
+	S.applyAll()
+end)
+ 
+-- Caja de texto + ADD
+local inputBox = mk("TextBox", {
+	Size = UDim2.new(1, -96, 0, 32), Position = UDim2.new(0, 10, 0, 92), BackgroundColor3 = C.soft, BorderSizePixel = 0,
+	Font = FM, TextSize = 12, TextColor3 = C.text, PlaceholderText = "Nombre del brainrot…", PlaceholderColor3 = C.muted,
+	Text = "", ClearTextOnFocus = false, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 12,
+}, panel)
+corner(inputBox, 10)
+mk("UIPadding", { PaddingLeft = UDim.new(0, 10) }, inputBox)
+stroke(inputBox, C.lime, 1, 0.65)
+ 
+local addBtn = mk("TextButton", {
+	Size = UDim2.fromOffset(70, 32), Position = UDim2.new(1, -80, 0, 92), BackgroundColor3 = Color3.fromRGB(24, 74, 48),
+	Text = "ADD", Font = FT, TextSize = 13, TextColor3 = C.text, AutoButtonColor = false, ZIndex = 12,
+}, panel)
+corner(addBtn, 10)
+stroke(addBtn, C.lime, 1.5, 0.35)
+ 
+-- Listas
+local function sectionLabel(text, y)
+	mk("TextLabel", { Position = UDim2.new(0, 12, 0, y), Size = UDim2.new(1, -24, 0, 14), BackgroundTransparency = 1, Font = FT, Text = text, TextSize = 11, TextColor3 = C.lime, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 12 }, panel)
+end
+local function newList(y, h)
+	local l = mk("ScrollingFrame", {
+		Position = UDim2.new(0, 10, 0, y), Size = UDim2.new(1, -20, 0, h), BackgroundColor3 = C.card, BackgroundTransparency = 0.25,
+		BorderSizePixel = 0, ScrollBarThickness = 3, ScrollBarImageColor3 = C.lime, CanvasSize = UDim2.new(),
+		AutomaticCanvasSize = Enum.AutomaticSize.Y, ZIndex = 12,
+	}, panel)
+	corner(l, 10)
+	mk("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 2) }, l)
+	mk("UIPadding", { PaddingTop = UDim.new(0, 3), PaddingLeft = UDim.new(0, 3), PaddingRight = UDim.new(0, 3) }, l)
+	return l
+end
+ 
+sectionLabel("SELECCIONADOS", 132)
+local selList = newList(149, 100)
+ 
+-- Botones SCAN / DUMP
+local function smallBtn(text, x, w)
+	local b = mk("TextButton", {
+		Size = UDim2.new(0.5, -15, 0, 30), Position = UDim2.new(x, x == 0 and 10 or 5, 0, 257), BackgroundColor3 = Color3.fromRGB(24, 74, 48),
+		Text = text, Font = FT, TextSize = 12, TextColor3 = C.text, AutoButtonColor = false, ZIndex = 12,
+	}, panel)
+	corner(b, 10)
+	stroke(b, C.lime, 1, 0.55)
+	return b
+end
+local scanBtn = smallBtn("🔍 SCAN", 0)
+local dumpBtn = smallBtn("🧾 DUMP", 0.5)
+ 
+sectionLabel("DETECTADOS AHORA (toca para activar)", 295)
+local detList = newList(312, 100)
+ 
+local detected = {}
+ 
+local function rebuild()
+	for _, c in ipairs(selList:GetChildren()) do if c:IsA("Frame") then c:Destroy() end end
+	for _, c in ipairs(detList:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
+ 
+	local names = {}
+	for k, v in pairs(S.selected) do names[#names + 1] = { k = k, v = v } end
+	table.sort(names, function(a, b) return a.v:lower() < b.v:lower() end)
+	for i, e in ipairs(names) do
+		local row = mk("Frame", { Size = UDim2.new(1, -6, 0, 24), BackgroundColor3 = C.soft, BackgroundTransparency = 0.15, BorderSizePixel = 0, LayoutOrder = i, ZIndex = 13 }, selList)
+		corner(row, 8)
+		mk("TextLabel", { Position = UDim2.new(0, 8, 0, 0), Size = UDim2.new(1, -36, 1, 0), BackgroundTransparency = 1, Font = FM, Text = "🥝 " .. e.v, TextSize = 12, TextColor3 = C.text, TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 14 }, row)
+		local x = mk("TextButton", { Size = UDim2.fromOffset(22, 22), Position = UDim2.new(1, -24, 0, 1), BackgroundTransparency = 1, Text = "✕", Font = FT, TextSize = 12, TextColor3 = C.red, ZIndex = 15 }, row)
+		x.MouseButton1Click:Connect(function()
+			S.selected[e.k] = nil
+			rebuild()
+			S.applyAll()
+		end)
+	end
+ 
+	for i, nm in ipairs(detected) do
+		local on = S.selected[norm(nm)] ~= nil
+		local b = mk("TextButton", {
+			Size = UDim2.new(1, -6, 0, 24), BackgroundColor3 = on and Color3.fromRGB(24, 74, 48) or C.soft, BackgroundTransparency = 0.15,
+			BorderSizePixel = 0, LayoutOrder = i, Font = FM, TextSize = 12, TextColor3 = on and C.lime or C.text,
+			Text = (on and "✓ " or "    ") .. nm, TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd,
+			AutoButtonColor = false, ZIndex = 13,
+		}, detList)
+		corner(b, 8)
+		mk("UIPadding", { PaddingLeft = UDim.new(0, 8) }, b)
+		b.MouseButton1Click:Connect(function()
+			local k = norm(nm)
+			if S.selected[k] then S.selected[k] = nil else S.selected[k] = nm end
+			rebuild()
+			S.applyAll()
+		end)
+	end
+end
+ 
+local function addFromBox()
+	local name = (inputBox.Text or ""):match("^%s*(.-)%s*$") or ""
+	if name == "" then return end
+	S.selected[norm(name)] = name
+	inputBox.Text = ""
+	rebuild()
+	S.applyAll()
+end
+addBtn.MouseButton1Click:Connect(addFromBox)
+inputBox.FocusLost:Connect(function(enter) if enter then addFromBox() end end)
+ 
+scanBtn.MouseButton1Click:Connect(function()
+	local found, seen = {}, {}
+	for _, inst in ipairs(Workspace:GetDescendants()) do
+		if inst.Name == "1OF1Banner" then
+			local root = inst:FindFirstAncestorOfClass("BillboardGui") or inst.Parent
+			local nm = root and S.guessName(root)
+			if nm and not seen[norm(nm)] then
+				seen[norm(nm)] = true
+				found[#found + 1] = nm
+			end
+		end
+	end
+	table.sort(found, function(a, b) return a:lower() < b:lower() end)
+	detected = found
+	rebuild()
+	if #found == 0 then print("[KIWI-1OF1] El SCAN no encontro overheads. Prueba acercarte a tu base o toca DUMP y mandame lo que salga en la consola.") end
+end)
+ 
+dumpBtn.MouseButton1Click:Connect(function()
+	print("[KIWI-1OF1] ===== DUMP =====")
+	local function show(title, t)
+		print(title)
+		if type(t) ~= "table" then
+			print("   (nada todavia: se llena cuando el juego carga un brainrot)")
+			return
+		end
+		for k, v in pairs(t) do print("   ", tostring(k), typeof(v), tostring(v):sub(1, 60)) end
+	end
+	show("lastData (Populate):", S.lastData)
+	show("lastRecord (ObserveOneOfOne):", S.lastRecord)
+	local n = 0
+	for _, inst in ipairs(Workspace:GetDescendants()) do
+		if inst.Name == "1OF1Banner" and n < 3 then
+			n += 1
+			local root = inst:FindFirstAncestorOfClass("BillboardGui") or inst.Parent
+			print("Overhead:", root and root:GetFullName() or "?")
+			for _, d in ipairs(root and root:GetDescendants() or {}) do
+				if d:IsA("TextLabel") then print("   ", d.Name, "=", d.Text) end
+			end
+		end
+	end
+	print("[KIWI-1OF1] ================")
+end)
+ 
+-- Arrastrar
+do
+	local dragging, dStart, dPos
+	header.InputBegan:Connect(function(i)
+		if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+			dragging, dStart, dPos = true, i.Position, panel.Position
+		end
+	end)
+	header.InputEnded:Connect(function(i)
+		if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+			dragging = false
+		end
+	end)
+	table.insert(S.conns, UIS.InputChanged:Connect(function(i)
+		if dragging and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+			local d = i.Position - dStart
+			panel.Position = UDim2.new(dPos.X.Scale, dPos.X.Offset + d.X, dPos.Y.Scale, dPos.Y.Offset + d.Y)
+		end
+	end))
+end
+ 
+rebuild()
+S.applyAll()
