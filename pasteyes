@@ -104,6 +104,8 @@ do
 	fact("ECLIPSE", "eclipse|eclipse mutation|celestial|celestial mutation|black and yellow|black and yellow mutation|turns black and yellow|sun mutation|bright sun")
 	fact("CRYSTAL", "crystal|crystal mutation|purple and blue|turns purple and blue")
 	fact("PHANTOM", "phantom|phantom mutation|ghost mutation|transparent black|flashing black")
+	fact("FESTIVE67", "festive 67|festive67|festive sixty seven")
+	fact("BOPPINBUNNY", "boppin bunny|boppin")
 	fact("CYBER", "cyber mutation|black and blue|turns black and blue")
 	fact("CANDY", "candy mutation|pink|pink mutation|turns pink")
 	fact("BLOODROT", "bloodrot|bloodrot mutation|dark red")
@@ -133,7 +135,26 @@ do
 	rule("REAPERBASE", "robux", "base|bases")
  
 	rule(function() return tostring(#MACHINES) end, "how", "many", "machines|machine")
- 
+
+	local FIRST = "first|1st|1|one|original|initial|earliest"
+	local SECOND = "second|2nd|2|two"
+	local PAID = "dlc|plush|plushie|plushies|merch|money|usd|website"
+	local BRAIN = "brainrot|brainrots|secret"
+	
+	-- Festive 67: primer DLC / primer plushie
+	rule("FESTIVE67", FIRST, PAID, BRAIN)
+	rule("FESTIVE67", FIRST, "plush|plushie|plushies")
+	
+	-- Boppin Bunny: segundo DLC / segundo plushie
+	rule("BOPPINBUNNY", SECOND, PAID, BRAIN)
+	rule("BOPPINBUNNY", SECOND, "plush|plushie|plushies")
+	
+	-- Datos extra de las wikis que pasaste
+	-- Boppin: primer plush que puede recibir mutaciones
+	rule("BOPPINBUNNY", FIRST, "plush|plushie|plushies|dlc", BRAIN, "mutation|mutations|mutated")
+	-- Festive 67: el plush/DLC que nunca puede mutar
+	rule("FESTIVE67", "cant|cannot|never|without|no", "mutation|mutations|mutated", "plush|plushie|plushies|dlc", BRAIN)
+
 	local MUT_DATES = {
 		{ "gold", "MAY", "31", "2025" }, { "diamond", "MAY", "31", "2025" },
 		{ "rainbow", "JUNE", "21", "2025" }, { "candy", "JULY", "5", "2025" },
@@ -252,9 +273,10 @@ do
 	local MAXSPAN = 6
 
 	local MACHINE_RANKING = { "PLANTBROS", "PHOENIX" }
-	
+
 	local BRAINROT_WORDS = { brainrot = true, brainrots = true, secret = true, secrets = true }
 	local MACHINE_WORDS = { machine = true, machines = true, fuse = true }
+	local DLC_WORDS = { dlc = true, plush = true, plushie = true, plushies = true, merch = true, money = true, usd = true }
 	local RANK_FILLER = {
 		the = true, a = true, my = true, best = true, top = true, highest = true,
 		rarest = true, strongest = true, richest = true, number = true, no = true,
@@ -272,7 +294,8 @@ do
 	local function matchRanked(tk)
 		local hasMachine = false
 		for _, t in ipairs(tk) do
-			if MACHINE_WORDS[t] then hasMachine = true break end
+			if DLC_WORDS[t] then return nil end -- es pregunta de DLC, que decida matchRule
+			if MACHINE_WORDS[t] then hasMachine = true end
 		end
 	
 		for p, t in ipairs(tk) do
@@ -296,7 +319,7 @@ do
 				end
 	
 				if rank and rank <= 20 then
-					if rank == 1 and not hasMachine then return nil end -- "1st brainrot" suelto: que decida lo demás
+					if rank == 1 and not hasMachine then return nil end
 					return MACHINE_RANKING[rank] or false
 				end
 			end
