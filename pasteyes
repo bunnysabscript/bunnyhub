@@ -1,0 +1,309 @@
+local solveRiddle
+do
+	local SYNONYMS = {
+		fav = "favorite", favourite = "favorite", faves = "favorite", favorites = "favorite",
+		colour = "color", colours = "color", colors = "color",
+	}
+	local ORDINALS, NUMBER_WORDS = {}, { one = 1, two = 2, three = 3, four = 4, five = 5, six = 6, seven = 7, eight = 8, nine = 9, ten = 10 }
+	for i, w in ipairs({ "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth",
+		"eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth",
+		"nineteenth", "twentieth" }) do ORDINALS[w] = i end
+	local LAST_WORDS = { last = true, latest = true, newest = true, final = true, new = true, newer = true, recent = true }
+ 
+	local MACHINES = {
+		"RAINBOWMACHINE", "BUBBLEGUMMACHINE", "FUSEMACHINE", "CRAFTMACHINE", "WITCHFUSE",
+		"BRAINROTDEALER", "BRAINROTTRADER", "SANTASFUSE", "SANTASSHOP", "NEWYEARSMACHINE",
+		"DUELSMACHINE", "CUPIDSMACHINE", "TRADEMACHINE", "DIVINEFUSE", "EGGINCUBATOR",
+		"CYBERCRAFTMACHINE", "SUMMERFUSE", "LOSTRADERS", "HAUNTEDFUSE" }
+ 
+	local MUTATIONS = { "BLOODROT", "CANDY", "LAVA", "GALAXY", "YINYANG", "RADIOACTIVE",
+		"CURSED", "DIVINE", "CYBER", "PHANTOM", "CRYSTAL", "ECLIPSE" }
+	local SEQUENCES = { machine = MACHINES, mutation = MUTATIONS, trait = { "LIGHTNING" } }
+ 
+	local function tokenize(text)
+		text = tostring(text or ""):lower()
+		text = text:gsub("\226\128\153", "'"):gsub("`", "'"):gsub("'", "")
+		text = text:gsub("[^%w%s]", " ")
+		local t = {}
+		for w in text:gmatch("%S+") do t[#t + 1] = SYNONYMS[w] or w end
+		return t
+	end
+ 
+	local INDEX, KEYS = {}, {}
+	local function fact(answer, aliases)
+		local f = { answer = answer }
+		for alias in aliases:gmatch("[^|]+") do
+			local toks = tokenize(alias)
+			local key = table.concat(toks, " ")
+			if not INDEX[key] then
+				INDEX[key] = f
+				KEYS[#KEYS + 1] = { key = key, fact = f }
+			end
+		end
+	end
+	local function evaluate(f)
+		if type(f.answer) == "function" then return f.answer() end
+		return f.answer
+	end
+ 
+	local function lastMutation() return MUTATIONS[#MUTATIONS] end
+  
+	fact("SAMMY", "creator|creator name|creator real name|owner|owner real name|real name|name|my name|what is my name|whats my name|my real name|sammy real name|sammys real name|who created sab|who is the owner|who made sab|who owns sab")
+	fact("24", "age|my age|how old am i|how old is sammy|sammy age")
+	fact("SPYDERSAMMY", "username|my username|my roblox username|roblox name|roblox username|sammy roblox name|sammy username|my youtube|sammy youtube|youtube channel")
+	fact("YOUTUBE", "social media")
+	fact("NOVA", "my cats name|what is my cats name")
+	fact("FRIDAY", "birth day|birthday|born on|day born|day i was born|created on|day sab was made|day sab was released|game created on|game creation day|game made on|sab made on|sab release day")
+	fact("FEBRUARY", "birth month|month born|month i was born")
+	fact("2002", "birth year|born year|year born|year i was born")
+	fact("ALGERIA", "birthplace|where i was born|where was i born|where was i born at")
+	fact("SAOPAULO", "city|my city|sammy city|state|my state|sammy state")
+	fact("BRAZIL", "country|my country|sammy country|sammy location|where am i from|where do i live|where does sammy live|where is sammy from")
+	fact("BRAZILIAN", "nationality|my nationality|sammy nationality")
+	fact("BLUE", "color|color is blue|favorite color|favorite color is blue|my color|my color is blue|sammy color|sammy color is blue")
+	fact("PIZZA", "favorite food|food|my food")
+	fact("FOOTBALL", "favorite football player|favorite player|favorite sport|football player|my sport|sport|ronaldo")
+	fact("SPIDER", "favorite animal|my animal|my pet")
+	fact("ROBLOX", "favorite game")
+	fact("67", "67|funny number|special number")
+	fact("STEALABRAINROT", "full name|game name|name of the game|sab|sab stands for")
+	fact("MAY162025", "date made|game release|game release date|game released|release date|sab release|sab released|when made|when was sab created|when was sab made|when was sab released")
+	fact("MAY", "release month|month sab was made|sab release month")
+	fact("2025", "release year|year created|year made|year of sab|year sab was created|year sab was made")
+	fact(function() return tostring(os.date("%Y")) end, "year we are on|year were on")
+	fact("COMMON", "common rarity|lowest rarity")
+	fact("OG", "highest rarity|rarest rarity|top rarity")
+	fact("LOSTRADERS", "rarest|rarest brainrot|headless horseman")
+	fact("STRAWBERRYELEPHANT", "best brainrot|unobtainable")
+	fact("DIVINE", "angelic|angelic mutation|divine mutation|good mutation|turns yellow|yellow|yellow mutation")
+	fact("GALAXY", "black and white|black mutation|purple|purple mutation|turns black|turns purple")
+	fact("CURSED", "cursed mutation|evil|evil mutation|red|red mutation|turns red")
+	fact("RADIOACTIVE", "green|green mutation|turns green")
+	fact("MOLTEN", "molten|molten mutation|orange|orange mutation|turns orange")
+	fact("LIGHTNING", "lightning|lightning trait|struck by lightning|trait from lightning|first trait created")
+	fact(lastMutation, "best mutation|top mutation|strongest mutation|most powerful mutation|highest mutation")
+	fact(lastMutation, "most recent|most recent mutation|newest mutation|latest mutation")
+ 
+	fact("ECLIPSE", "eclipse|eclipse mutation|celestial|celestial mutation|black and yellow|black and yellow mutation|turns black and yellow|sun mutation|bright sun")
+	fact("CRYSTAL", "crystal|crystal mutation|purple and blue|turns purple and blue")
+	fact("PHANTOM", "phantom|phantom mutation|ghost mutation|transparent black|flashing black")
+	fact("CYBER", "cyber mutation|black and blue|turns black and blue")
+	fact("CANDY", "candy mutation|pink|pink mutation|turns pink")
+	fact("BLOODROT", "bloodrot|bloodrot mutation|dark red")
+ 
+	fact("EXTINCTDRAGON", "new dragon|newest dragon|latest dragon|last dragon|recent dragon|extinct dragon|new dragon name")
+	fact("REAPERBASE", "new base|newest base|latest base|last base|new robux base|robux base|new base with robux|new base i added|base i added|new base for robux|newest robux base")
+	fact("PLANTBROS", "best brainrot in the new machine|best brainrot in the last machine|best brainrot in the latest machine|best brainrot in the newest machine|new machine best brainrot|last machine best brainrot")
+ 
+	local RULES = {}
+	local function rule(answer, ...)
+		local groups = {}
+		for _, g in ipairs({ ... }) do
+			local set = {}
+			for w in g:gmatch("[^|]+") do set[w] = true end
+			groups[#groups + 1] = set
+		end
+		RULES[#RULES + 1] = { answer = answer, groups = groups }
+	end
+ 
+	local NEWW = "new|newest|latest|last|recent|newer|newly"
+ 
+	rule("PLANTBROS", "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret", NEWW .. "|haunted|19th|nineteenth", "machine|fuse")
+	rule("EXTINCTDRAGON", NEWW, "dragon|dragons")
+	rule("EXTINCTDRAGON", "extinct", "dragon|dragons")
+	rule("REAPERBASE", NEWW, "base|bases")
+	rule("REAPERBASE", "robux", "base|bases")
+ 
+	rule(function() return tostring(#MACHINES) end, "how", "many", "machines|machine")
+ 
+	local MUT_DATES = {
+		{ "gold", "MAY", "31", "2025" }, { "diamond", "MAY", "31", "2025" },
+		{ "rainbow", "JUNE", "21", "2025" }, { "candy", "JULY", "5", "2025" },
+		{ "lava", "JULY", "25", "2025" }, { "galaxy", "AUGUST", "23", "2025" },
+		{ "yin", "SEPTEMBER", "27", "2025" }, { "radioactive", "NOVEMBER", "15", "2025" },
+		{ "cursed", "JANUARY", "3", "2026" }, { "divine", "FEBRUARY", "21", "2026" },
+		{ "cyber", "APRIL", "18", "2026" }, { "phantom", "JUNE", "13", "2026" },
+		{ "crystal", "JULY", "25", "2026" }, { "eclipse", "OCTOBER", "2", "2026" },
+	}
+	for _, d in ipairs(MUT_DATES) do
+		rule(d[2], d[1], "mutation|mutations", "month")
+		rule(d[4], d[1], "mutation|mutations", "year")
+	end
+	for _, d in ipairs(MUT_DATES) do
+		rule(d[2] .. d[3] .. d[4], d[1], "mutation|mutations", "released|release|added|made|came|date|out|introduced|created")
+	end
+ 
+	local function matchRule(tk)
+		local present = {}
+		for _, t in ipairs(tk) do present[t] = true end
+		local best, bestN = nil, 0
+		for _, r in ipairs(RULES) do
+			local ok = true
+			for _, set in ipairs(r.groups) do
+				local hit = false
+				for w in pairs(set) do
+					if present[w] then
+						hit = true
+						break
+					end
+				end
+				if not hit then
+					ok = false
+					break
+				end
+			end
+			if ok and #r.groups > bestN then best, bestN = r, #r.groups end
+		end
+		if best then return evaluate(best) end
+		return nil
+	end
+ 
+	local function ordIndex(t)
+		local n, suf = t:match("^(%d+)(%a+)$")
+		if n and (suf == "st" or suf == "nd" or suf == "rd" or suf == "th") then return tonumber(n) end
+		return ORDINALS[t]
+	end
+	local function kindOf(t)
+		local s = t:gsub("s$", "")
+		if SEQUENCES[s] then return s end
+	end
+ 
+	local function matchSequence(tk, i, j)
+		if j - i > 2 then return nil end
+		local idx, kind, last
+		for p = i, j do
+			local t = tk[p]
+			local o = ordIndex(t)
+			if o then
+				if idx or last then return nil end
+				idx = o
+			elseif LAST_WORDS[t] then
+				if idx or last then return nil end
+				last = true
+			elseif kindOf(t) then
+				if kind then return nil end
+				kind = kindOf(t)
+			elseif t ~= "created" then
+				return nil
+			end
+		end
+		if not kind or not (idx or last) then return nil end
+		local list = SEQUENCES[kind]
+		return idx and list[idx] or list[#list]
+	end
+ 
+	local function readRepeat(tk, p)
+		local a, b = tk[p], tk[p + 1]
+		if a == "twice" then return 2, 1 end
+		if a == "thrice" then return 3, 1 end
+		if b == "times" or b == "time" then
+			local c = tonumber(a) or NUMBER_WORDS[a]
+			if c and c >= 1 and c <= 10 then return c, 2 end
+		end
+		return 1, 0
+	end
+ 
+	local function tailRepeat(tk)
+		local n = #tk
+		local c, used = readRepeat(tk, n)
+		if used > 0 then return c end
+		local c2, u2 = readRepeat(tk, n - 1)
+		if u2 == 2 then return c2 end
+		return 1
+	end
+ 
+	local function lev(a, b, maxD)
+		local la, lb = #a, #b
+		if math.abs(la - lb) > maxD then return maxD + 1 end
+		local prev, cur = {}, {}
+		for j = 0, lb do prev[j] = j end
+		for i = 1, la do
+			cur[0] = i
+			local rowMin = i
+			for j = 1, lb do
+				local v = math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + ((a:byte(i) == b:byte(j)) and 0 or 1))
+				cur[j] = v
+				if v < rowMin then rowMin = v end
+			end
+			if rowMin > maxD then return maxD + 1 end
+			prev, cur = cur, prev
+		end
+		return prev[lb]
+	end
+ 
+	local MAXSPAN = 6
+ 
+	local function solveClause(text)
+		local tk = tokenize(text)
+		local n = #tk
+		if n == 0 then return nil end
+ 
+		local ruled = matchRule(tk)
+		if ruled then return string.rep(ruled, tailRepeat(tk)) end
+ 
+		local out, i = {}, 1
+		while i <= n do
+			local matched = false
+			for j = math.min(n, i + MAXSPAN - 1), i, -1 do
+				local f = INDEX[table.concat(tk, " ", i, j)]
+				local ans = (f and evaluate(f)) or matchSequence(tk, i, j)
+				if ans then
+					local c, used = readRepeat(tk, j + 1)
+					out[#out + 1] = string.rep(ans, c)
+					i = j + 1 + used
+					matched = true
+					break
+				end
+			end
+			if not matched then i += 1 end
+		end
+		if #out > 0 then return table.concat(out) end
+ 
+		local c, used = readRepeat(tk, n)
+		if used == 0 then
+			local c2, u2 = readRepeat(tk, n - 1)
+			if u2 == 2 then c, used = c2, 2 end
+		end
+		local core = {}
+		for p = 1, n - used do core[p] = tk[p] end
+		local q = table.concat(core, " ")
+		if #q < 3 then return nil end
+ 
+		local best, bestScore, second = nil, 0, 0
+		for _, e in ipairs(KEYS) do
+			local maxLen = math.max(#q, #e.key)
+			local maxD = math.floor(maxLen * 0.25)
+			local d = lev(q, e.key, maxD)
+			if d <= maxD then
+				local score = 1 - d / maxLen
+				if score > bestScore then
+					if best and best.fact ~= e.fact then second = bestScore end
+					best, bestScore = e, score
+				elseif best and e.fact ~= best.fact and score > second then
+					second = score
+				end
+			end
+		end
+		if best and bestScore >= 0.8 and (bestScore - second) >= 0.05 then
+			return string.rep(evaluate(best.fact), c)
+		end
+		return nil
+	end
+ 
+	solveRiddle = function(raw)
+		local text = tostring(raw or "")
+		local out = {}
+		for clause in (text .. "+"):gmatch("([^%+,;&|\n]*)[%+,;&|\n]") do
+			if clause:find("%S") then
+				local a = solveClause(clause)
+				if a then out[#out + 1] = a end
+			end
+		end
+		if #out == 0 then return nil end
+		local s = table.concat(out)
+		s = s:upper():gsub("%s+", "") 
+		return s
+	end
+end
+
+return solveRiddle
