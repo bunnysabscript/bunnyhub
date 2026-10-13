@@ -1,8 +1,8 @@
 --[[
   UPDATE 70 · HALLOWEEN  —  respuestas nuevas + 3 arreglos
-  Integrado correctamente en el solver
+  + FUSE MACHINE (2025/2026) y HAUNTED FUSE (wiki)
 ]]
- 
+
 local solveRiddle
 do
 	local SYNONYMS = {
@@ -14,21 +14,21 @@ do
 		"eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth",
 		"nineteenth", "twentieth" }) do ORDINALS[w] = i end
 	local LAST_WORDS = { last = true, latest = true, newest = true, final = true, new = true, newer = true, recent = true }
- 
+
 	local MACHINES = {
 		"RAINBOWMACHINE", "BUBBLEGUMMACHINE", "FUSEMACHINE", "CRAFTMACHINE", "WITCHFUSE",
 		"BRAINROTDEALER", "BRAINROTTRADER", "SANTASFUSE", "SANTASSHOP", "NEWYEARSMACHINE",
 		"DUELSMACHINE", "CUPIDSMACHINE", "TRADEMACHINE", "DIVINEFUSE", "EGGINCUBATOR",
 		"CYBERCRAFTMACHINE", "SUMMERFUSE", "LOSTRADERS", "HAUNTEDFUSE" }
- 
+
 	local MUTATIONS = { "GOLD", "DIAMOND", "RAINBOW", "BLOODROT", "CANDY", "LAVA", "GALAXY",
 		"YINYANG", "RADIOACTIVE", "CURSED", "DIVINE", "CYBER", "PHANTOM", "CRYSTAL", "ECLIPSE" }
-	
+
 	-- PASO 4: Salta GOLD, DIAMOND, RAINBOW para las secuencias de mutaciones
 	local LIMITED = {}
 	for i = 4, #MUTATIONS do LIMITED[#LIMITED + 1] = MUTATIONS[i] end
 	local SEQUENCES = { machine = MACHINES, mutation = LIMITED, trait = { "LIGHTNING" } }
- 
+
 	local function tokenize(text)
 		text = tostring(text or ""):lower()
 		text = text:gsub("\226\128\153", "'"):gsub("`", "'"):gsub("'", "")
@@ -37,7 +37,7 @@ do
 		for w in text:gmatch("%S+") do t[#t + 1] = SYNONYMS[w] or w end
 		return t
 	end
- 
+
 	local INDEX, KEYS = {}, {}
 	local function fact(answer, aliases)
 		local f = { answer = answer }
@@ -54,9 +54,9 @@ do
 		if type(f.answer) == "function" then return f.answer() end
 		return f.answer
 	end
- 
+
 	local function lastMutation() return MUTATIONS[#MUTATIONS] end
-  
+
 	fact("SAMMY", "creator|creator name|creator real name|owner|owner real name|real name|name|my name|what is my name|whats my name|my real name|sammy real name|sammys real name|who created sab|who is the owner|who made sab|who owns sab")
 	fact(function()
 		local d = os.date("*t")
@@ -97,13 +97,12 @@ do
 	fact("FROST", "mutation scrapped after phantom|frost")
 	fact("RUSTYNICKLE40", "who suggested cyber|cyber idea|cyber suggested by|who proposed cyber")
 	fact("CURSED", "spawned by accident instead of divine|accidentally spawned instead of divine")
-	fact("51", "mutation rain update|mutation rain added|anniversary update")
 	fact("RADIOACTIVE", "first mutation with texture|first texture mutation|first seasonal mutation")
-	
+
 	-- PASO 4: Actualización de los facts de GOLD y DIAMOND
 	fact("GOLD", "first mutation added|first mutations added|first mutation in the game|first mutation ever|original mutation")
 	fact("DIAMOND", "second mutation added|second mutation in the game")
-	
+
 	fact("ECLIPSE", "highest multiplier|biggest multiplier|best multiplier|highest multi")
 	fact("GOLD", "lowest mutation multiplier|lowest multiplier|smallest multiplier|most common mutation|common mutation")
 	fact("DIAMOND", "second most common mutation")
@@ -112,7 +111,7 @@ do
 	fact("LIGHTNING", "lightning|lightning trait|struck by lightning|trait from lightning|first trait created")
 	fact(lastMutation, "best mutation|top mutation|strongest mutation|most powerful mutation|highest mutation")
 	fact(lastMutation, "most recent|most recent mutation|newest mutation|latest mutation")
- 
+
 	fact("ECLIPSE", "eclipse|eclipse mutation|celestial|celestial mutation|black and yellow|black and yellow mutation|turns black and yellow|sun mutation|bright sun")
 	fact("CRYSTAL", "crystal|crystal mutation|purple and blue|turns purple and blue")
 	fact("PHANTOM", "phantom|phantom mutation|ghost mutation|transparent black|flashing black")
@@ -135,29 +134,27 @@ do
 		end
 		RULES[#RULES + 1] = { answer = answer, groups = groups }
 	end
- 
+
 	local NEWW = "new|newest|latest|last|recent|newer|newly"
- 
-	rule("PLANTBROS", "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret", NEWW .. "|haunted|19th|nineteenth", "machine|fuse")
-	rule("PLANTBROS", "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret", "machine|machines|fuse")
-	
-	-- PASO 1: Se eliminaron las 3 líneas anteriores de EXTINCTDRAGON y SKELETONINIDRAGON, 
-	-- y se reemplazaron por el bloque completo del Update 70 (Paso 2) aquí abajo:
- 
+
+	rule("PHOENIX", "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret", NEWW .. "|haunted|19th|nineteenth", "machine|fuse")
+	rule("PHOENIX", "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret", "machine|machines|fuse")
+
 	-- ================= UPDATE 70 · HALLOWEEN (wiki) =================
 	local DRAGON_ANSWER = "DRAGONSKELETONINI"
- 
+
 	local BESTW = "best|top|highest|rarest|strongest|richest|biggest|greatest"
 	local WORSTW = "worst|lowest|weakest|poorest|least|smallest|cheapest|common"
 	local BRAINW = "brainrot|brainrots|secret|secrets"
 	local BLOCKW = "block|blocks"
- 
+
 	-- el dragon nuevo
 	rule(DRAGON_ANSWER, NEWW, "dragon|dragons")
 	rule(DRAGON_ANSWER, "extinct", "dragon|dragons")
- 
+
 	-- Skull Lucky Block (el 2do lucky block de Halloween)
 	rule("SKULLLUCKYBLOCK", NEWW .. "|second|halloween", "lucky", BLOCKW)
+	rule("500M", "skull", "lucky", BLOCKW, "cost|costs|price|buy")
 	rule("SKULL", "skull|halloween", "lucky", BLOCKW, "rarity|rare")
 	rule(DRAGON_ANSWER, BESTW, BRAINW, "lucky", BLOCKW)
 	rule("CANDICORNI", WORSTW, BRAINW, "lucky", BLOCKW)
@@ -168,13 +165,13 @@ do
 	rule(DRAGON_ANSWER, "first|1st", "extinct", "theme|themed|after|event")
 	rule(DRAGON_ANSWER, "first|1st", "dragon", "lucky", BLOCKW)
 	rule("ORCHIDOX", "surpass|surpasses|surpassed|surpassing|beats|beat|replaced", "lucky", BLOCKW)
+	rule("13", "months|month", "extinct", "event", "after|since|later|added")
+	eventRules("OCTOBER", "8", "2026", "THURSDAY", "leaked|leak|revealed", "model|finished", "skeletonini|dragon")
 
- 
 	-- trivia de Flying Dutchman
-	rule("FLYINGDUTCHMAN", "worst|weakest|bad", "reskin", "capitano|moby")
-	rule("HENDRICK", "captain|captains", "dutchman|flying|folklore")
+	rule("FLYINGDUTCHMAN", "captain|captains", "dutchman|flying|folklore")
 	rule("NETHERLANDS", "dutchman|flying", "from|origin|folklore|country|nation|where")
- 
+
 	local LUCKY_RANKING = {
 		DRAGON_ANSWER, "FLYINGDUTCHMAN", "BOOBOOROCKET", "BATINTHEBOX",
 		"BANANITOSKELITO", "ZOMBIEBOWL", "GRIMCHEESE", "CANDICORNI",
@@ -182,22 +179,86 @@ do
 	local BLOCK_WORDS = { lucky = true, block = true, blocks = true, skull = true }
 	-- ===============================================================
 
+	-- ============ EXTRA · FUSE MACHINE (2025/2026) + HAUNTED FUSE (wiki) ============
+	local unpack_ = table.unpack or unpack
+
+	local MACH    = "machine|machines"
+	local REL     = "released|release|added|made|came|out|introduced|created|launched|start|started"
+	local REMW    = "removed|remove|removal|deleted|ended|gone"
+	local RETW    = "returned|return|back|comeback|readded|reintroduced|rereleased|brought"
+	local REPLW   = "replaced|replace|replaces|replacing|replacement"
+	local NEXTW   = "next|after|followed|following|successor"
+	local PREVW   = "previous|before|prior|preceded|predecessor"
+	local F25     = "first|1st|original|2025|old|initial|earliest"
+	local F26     = "second|2nd|2026|returned|return|comeback|readded|back"
+	local INCOMEW = "income|make|makes|earn|earns|generate|generates|production"
+	local CHANCEW = "chance|percent|percentage|odds|probability"
+
+	-- reglas de fecha: mes+dia+año / mes+año / mes+dia / mes / año / dia de la semana / fecha completa
+	local function eventRules(mon, day, yr, wd, ...)
+		rule(mon .. day .. yr, "month", "day", "year", ...)
+		rule(mon .. yr, "month", "year", ...)
+		rule(mon .. day, "month", "day", ...)
+		rule(mon, "month", ...)
+		rule(yr, "year", ...)
+		rule(wd, "day", "week|weekday", ...)
+		rule(mon .. day .. yr, "date|when", ...)
+	end
+
+	-- regla "clave + palabra de ingreso/chance": keyedRule(respuesta, palabraExtra, clave1, clave2, ...)
+	local function keyedRule(answer, tail, ...)
+		local groups = { ... }
+		groups[#groups + 1] = tail
+		rule(answer, unpack_(groups))
+	end
+
+	-- ---------- Haunted Fuse ----------
+	eventRules("OCTOBER", "3", "2026", "SATURDAY", "haunted", "fuse", REL)
+	rule("CRAFTMACHINE", "haunted", "fuse", REPLW .. "|" .. PREVW .. "|last")
+	rule("17", "haunted", "fuse", "how", "many", BRAINW)
+	rule("JUMPFOREGGS", "haunted", "fuse", "last|previous|before|prior|preceded", "event|ltm")
+	rule("LOSTREATERS", "haunted", "fuse", "lowest|worst|weakest|cheapest|least", "secret|secrets|brainrot|brainrots")
+
+	-- ---------- Fuse Machine (2025 original / 2026 regreso) ----------
+	eventRules("AUGUST", "1", "2025", "FRIDAY", "fuse", MACH, F25, REL)
+	eventRules("SEPTEMBER", "6", "2025", "SATURDAY", "fuse", MACH, F25, REMW)
+	eventRules("JANUARY", "24", "2026", "SATURDAY", "fuse", MACH, RETW)
+
+	rule("4", "fuse", MACH, "how", "many", "brainrot|brainrots", "put|place|need|needed|required|require|start|insert|input")
+
+	-- maquina anterior / siguiente
+	rule("BUBBLEGUMMACHINE", "fuse", MACH, F25, PREVW)
+	rule("DUELSMACHINE", "fuse", MACH, F26, PREVW)
+	rule("CRAFTMACHINE", "fuse", MACH, F25, NEXTW .. "|" .. REPLW)
+	rule("CUPIDSMACHINE", "fuse", MACH, F26, NEXTW)
+	rule("DIVINEFUSE", "fuse", MACH, F26, REPLW)
+
+	-- mejor / peor brainrot de cada version
+	rule("LASUPREMECOMBINASION", "fuse", MACH, F25, "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret|secrets")
+	rule("HYDRADRAGONCANNELLONI", "fuse", MACH, F26, "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret|secrets")
+	rule("PIPICORNI", "fuse", MACH, "lowest|worst|weakest|cheapest|least|common", "brainrot|brainrots")
+
+	-- combinaciones especiales
+	rule("KETUPATBROS", "ginger|gerat|kepat", "combination|special|combo|fuse|fusing|fused|made|get|gets|obtain|result|combine|combined|create|created|mix|mixed|into")
+	rule("LOSSWEETHEARTS", "tralaleritos|tralaleritas|hotspot|heart", "combination|special|combo|fuse|fusing|fused|made|get|gets|obtain|result|combine|combined|create|created|mix|mixed|into")
+
+
 	rule("REAPERBASE", NEWW, "base|bases")
 	rule("REAPERBASE", "robux", "base|bases")
- 
+
 	rule(function() return tostring(#MACHINES) end, "how", "many", "machines|machine")
 
 	local FIRST = "first|1st|1|one|original|initial|earliest"
 	local SECOND = "second|2nd|2|two"
 	local PAID = "dlc|plush|plushie|plushies|merch|money|usd|website"
 	local BRAIN = "brainrot|brainrots|secret"
-	
+
 	rule("FESTIVE67", FIRST, PAID, BRAIN)
 	rule("FESTIVE67", FIRST, "plush|plushie|plushies")
-	
+
 	rule("BOPPINBUNNY", SECOND, PAID, BRAIN)
 	rule("BOPPINBUNNY", SECOND, "plush|plushie|plushies")
-	
+
 	rule("BOPPINBUNNY", FIRST, "plush|plushie|plushies|dlc", BRAIN, "mutation|mutations|mutated")
 	rule("FESTIVE67", "cant|cannot|never|without|no", "mutation|mutations|mutated", "plush|plushie|plushies|dlc", BRAIN)
 
@@ -217,7 +278,7 @@ do
 	for _, d in ipairs(MUT_DATES) do
 		rule(d[2] .. d[3] .. d[4], d[1], "mutation|mutations", "released|release|added|made|came|date|out|introduced|created")
 	end
- 
+
 	local function matchRule(tk)
 		local present = {}
 		for _, t in ipairs(tk) do present[t] = true end
@@ -242,7 +303,7 @@ do
 		if best then return evaluate(best) end
 		return nil
 	end
- 
+
 	local function ordIndex(t)
 		local n, suf = t:match("^(%d+)(%a+)$")
 		if n and (suf == "st" or suf == "nd" or suf == "rd" or suf == "th") then return tonumber(n) end
@@ -252,7 +313,7 @@ do
 		local s = t:gsub("s$", "")
 		if SEQUENCES[s] then return s end
 	end
- 
+
 	local function matchSequence(tk, i, j)
 		if j - i > 2 then return nil end
 		local idx, kind, last
@@ -276,7 +337,7 @@ do
 		local list = SEQUENCES[kind]
 		return idx and list[idx] or list[#list]
 	end
- 
+
 	local function readRepeat(tk, p)
 		local a, b = tk[p], tk[p + 1]
 		if a == "twice" then return 2, 1 end
@@ -287,7 +348,7 @@ do
 		end
 		return 1, 0
 	end
- 
+
 	local function tailRepeat(tk)
 		local n = #tk
 		local c, used = readRepeat(tk, n)
@@ -296,7 +357,7 @@ do
 		if u2 == 2 then return c2 end
 		return 1
 	end
- 
+
 	local function lev(a, b, maxD)
 		local la, lb = #a, #b
 		if math.abs(la - lb) > maxD then return maxD + 1 end
@@ -315,10 +376,10 @@ do
 		end
 		return prev[lb]
 	end
- 
+
 	local MAXSPAN = 6
 
-	local MACHINE_RANKING = { "PLANTBROS", "PHOENIX" }
+	local MACHINE_RANKING = { "PHOENIX", "PLANTBROS" }
 
 	local BRAINROT_WORDS = { brainrot = true, brainrots = true, secret = true, secrets = true }
 	local MACHINE_WORDS = { machine = true, machines = true, fuse = true }
@@ -328,15 +389,15 @@ do
 		rarest = true, strongest = true, richest = true, number = true, no = true,
 		rank = true, ranked = true, tier = true,
 	}
-	
+
 	local function rankOf(t)
 		local o = ordIndex(t)
 		if o then return o end
 		if t:match("^%d+$") then return tonumber(t) end
 		return NUMBER_WORDS[t]
 	end
-	
-	-- PASO 3: matchRanked actualizado con soporte para bloques de la suerte (Skull Lucky Block)
+
+	-- PASO 3: matchRanked con soporte para bloques de la suerte (Skull Lucky Block)
 	local function matchRanked(tk)
 		local hasMachine, hasBlock = false, false
 		for _, t in ipairs(tk) do
@@ -344,25 +405,25 @@ do
 			if MACHINE_WORDS[t] then hasMachine = true end
 			if BLOCK_WORDS[t] then hasBlock = true end
 		end
-	
+
 		for p, t in ipairs(tk) do
 			if BRAINROT_WORDS[t] then
 				local rank
-	
+
 				for q = p - 1, math.max(1, p - 4), -1 do
 					local w = tk[q]
 					rank = rankOf(w)
 					if rank then break end
 					if not RANK_FILLER[w] then break end
 				end
-	
+
 				if not rank then
 					local k = p + 1
 					if tk[k] == "number" or tk[k] == "no" then k = k + 1 end
 					local r = tk[k] and rankOf(tk[k])
 					if r and tk[k + 1] ~= "time" and tk[k + 1] ~= "times" then rank = r end
 				end
-	
+
 				if rank and rank <= 20 then
 					if rank == 1 and not hasMachine and not hasBlock then return nil end
 					local list = hasBlock and LUCKY_RANKING or MACHINE_RANKING
@@ -384,7 +445,7 @@ do
 
 		local ruled = matchRule(tk)
 		if ruled then return string.rep(ruled, tailRepeat(tk)) end
- 
+
 		local out, i = {}, 1
 		while i <= n do
 			local matched = false
@@ -402,7 +463,7 @@ do
 			if not matched then i = i + 1 end
 		end
 		if #out > 0 then return table.concat(out) end
- 
+
 		local c, used = readRepeat(tk, n)
 		if used == 0 then
 			local c2, u2 = readRepeat(tk, n - 1)
@@ -412,7 +473,7 @@ do
 		for p = 1, n - used do core[p] = tk[p] end
 		local q = table.concat(core, " ")
 		if #q < 3 then return nil end
- 
+
 		local best, bestScore, second = nil, 0, 0
 		for _, e in ipairs(KEYS) do
 			local maxLen = math.max(#q, #e.key)
@@ -433,7 +494,7 @@ do
 		end
 		return nil
 	end
- 
+
 	solveRiddle = function(raw)
 		local text = tostring(raw or "")
 		local out = {}
@@ -445,7 +506,7 @@ do
 		end
 		if #out == 0 then return nil end
 		local s = table.concat(out)
-		s = s:upper():gsub("%s+", "") 
+		s = s:upper():gsub("%s+", "")
 		return s
 	end
 end
