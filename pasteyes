@@ -1,3 +1,8 @@
+--[[
+  UPDATE 70 · HALLOWEEN  —  respuestas nuevas + 3 arreglos
+  Integrado correctamente en el solver
+]]
+ 
 local solveRiddle
 do
 	local SYNONYMS = {
@@ -18,7 +23,11 @@ do
  
 	local MUTATIONS = { "GOLD", "DIAMOND", "RAINBOW", "BLOODROT", "CANDY", "LAVA", "GALAXY",
 		"YINYANG", "RADIOACTIVE", "CURSED", "DIVINE", "CYBER", "PHANTOM", "CRYSTAL", "ECLIPSE" }
-	local SEQUENCES = { machine = MACHINES, mutation = MUTATIONS, trait = { "LIGHTNING" } }
+	
+	-- PASO 4: Salta GOLD, DIAMOND, RAINBOW para las secuencias de mutaciones
+	local LIMITED = {}
+	for i = 4, #MUTATIONS do LIMITED[#LIMITED + 1] = MUTATIONS[i] end
+	local SEQUENCES = { machine = MACHINES, mutation = LIMITED, trait = { "LIGHTNING" } }
  
 	local function tokenize(text)
 		text = tostring(text or ""):lower()
@@ -90,8 +99,11 @@ do
 	fact("CURSED", "spawned by accident instead of divine|accidentally spawned instead of divine")
 	fact("51", "mutation rain update|mutation rain added|anniversary update")
 	fact("RADIOACTIVE", "first mutation with texture|first texture mutation|first seasonal mutation")
-	fact("GOLD", "first mutation|first mutations added")
-	fact("DIAMOND", "second mutation added")
+	
+	-- PASO 4: Actualización de los facts de GOLD y DIAMOND
+	fact("GOLD", "first mutation added|first mutations added|first mutation in the game|first mutation ever|original mutation")
+	fact("DIAMOND", "second mutation added|second mutation in the game")
+	
 	fact("ECLIPSE", "highest multiplier|biggest multiplier|best multiplier|highest multi")
 	fact("GOLD", "lowest mutation multiplier|lowest multiplier|smallest multiplier|most common mutation|common mutation")
 	fact("DIAMOND", "second most common mutation")
@@ -109,8 +121,7 @@ do
 	fact("CYBER", "cyber mutation|black and blue|turns black and blue")
 	fact("CANDY", "candy mutation|pink|pink mutation|turns pink")
 	fact("BLOODROT", "bloodrot|bloodrot mutation|dark red")
- 
-	fact("EXTINCTDRAGON", "new dragon|newest dragon|latest dragon|last dragon|recent dragon|extinct dragon|new dragon name")
+
 	fact("REAPERBASE", "new base|newest base|latest base|last base|new robux base|robux base|new base with robux|new base i added|base i added|new base for robux|newest robux base")
 	fact("PLANTBROS", "best brainrot in the new machine|best brainrot in the last machine|best brainrot in the latest machine|best brainrot in the newest machine|new machine best brainrot|last machine best brainrot")
 
@@ -129,8 +140,48 @@ do
  
 	rule("PLANTBROS", "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret", NEWW .. "|haunted|19th|nineteenth", "machine|fuse")
 	rule("PLANTBROS", "best|top|highest|rarest|strongest|richest", "brainrot|brainrots|secret", "machine|machines|fuse")
-	rule("EXTINCTDRAGON", NEWW, "dragon|dragons")
-	rule("EXTINCTDRAGON", "extinct", "dragon|dragons")
+	
+	-- PASO 1: Se eliminaron las 3 líneas anteriores de EXTINCTDRAGON y SKELETONINIDRAGON, 
+	-- y se reemplazaron por el bloque completo del Update 70 (Paso 2) aquí abajo:
+ 
+	-- ================= UPDATE 70 · HALLOWEEN (wiki) =================
+	local DRAGON_ANSWER = "DRAGONSKELETONINI"
+ 
+	local BESTW = "best|top|highest|rarest|strongest|richest|biggest|greatest"
+	local WORSTW = "worst|lowest|weakest|poorest|least|smallest|cheapest|common"
+	local BRAINW = "brainrot|brainrots|secret|secrets"
+	local BLOCKW = "block|blocks"
+ 
+	-- el dragon nuevo
+	rule(DRAGON_ANSWER, NEWW, "dragon|dragons")
+	rule(DRAGON_ANSWER, "extinct", "dragon|dragons")
+ 
+	-- Skull Lucky Block (el 2do lucky block de Halloween)
+	rule("SKULLLUCKYBLOCK", NEWW .. "|second|halloween", "lucky", BLOCKW)
+	rule("SKULL", "skull|halloween", "lucky", BLOCKW, "rarity|rare")
+	rule(DRAGON_ANSWER, BESTW, BRAINW, "lucky", BLOCKW)
+	rule("CANDICORNI", WORSTW, BRAINW, "lucky", BLOCKW)
+
+	-- trivia de Dragon Skeletonini
+	rule(DRAGON_ANSWER, "6th|sixth", "reskin", "cannelloni|dragon")
+	rule(DRAGON_ANSWER, "resembles|resemble|similar|resemblance|like", "vulturino|skeletono")
+	rule(DRAGON_ANSWER, "first|1st", "extinct", "theme|themed|after|event")
+	rule(DRAGON_ANSWER, "first|1st", "dragon", "lucky", BLOCKW)
+	rule("ORCHIDOX", "surpass|surpasses|surpassed|surpassing|beats|beat|replaced", "lucky", BLOCKW)
+
+ 
+	-- trivia de Flying Dutchman
+	rule("FLYINGDUTCHMAN", "worst|weakest|bad", "reskin", "capitano|moby")
+	rule("HENDRICK", "captain|captains", "dutchman|flying|folklore")
+	rule("NETHERLANDS", "dutchman|flying", "from|origin|folklore|country|nation|where")
+ 
+	local LUCKY_RANKING = {
+		DRAGON_ANSWER, "FLYINGDUTCHMAN", "BOOBOOROCKET", "BATINTHEBOX",
+		"BANANITOSKELITO", "ZOMBIEBOWL", "GRIMCHEESE", "CANDICORNI",
+	}
+	local BLOCK_WORDS = { lucky = true, block = true, blocks = true, skull = true }
+	-- ===============================================================
+
 	rule("REAPERBASE", NEWW, "base|bases")
 	rule("REAPERBASE", "robux", "base|bases")
  
@@ -141,18 +192,13 @@ do
 	local PAID = "dlc|plush|plushie|plushies|merch|money|usd|website"
 	local BRAIN = "brainrot|brainrots|secret"
 	
-	-- Festive 67: primer DLC / primer plushie
 	rule("FESTIVE67", FIRST, PAID, BRAIN)
 	rule("FESTIVE67", FIRST, "plush|plushie|plushies")
 	
-	-- Boppin Bunny: segundo DLC / segundo plushie
 	rule("BOPPINBUNNY", SECOND, PAID, BRAIN)
 	rule("BOPPINBUNNY", SECOND, "plush|plushie|plushies")
 	
-	-- Datos extra de las wikis que pasaste
-	-- Boppin: primer plush que puede recibir mutaciones
 	rule("BOPPINBUNNY", FIRST, "plush|plushie|plushies|dlc", BRAIN, "mutation|mutations|mutated")
-	-- Festive 67: el plush/DLC que nunca puede mutar
 	rule("FESTIVE67", "cant|cannot|never|without|no", "mutation|mutations|mutated", "plush|plushie|plushies|dlc", BRAIN)
 
 	local MUT_DATES = {
@@ -284,25 +330,25 @@ do
 	}
 	
 	local function rankOf(t)
-		local o = ordIndex(t) -- 2nd, second, third...
+		local o = ordIndex(t)
 		if o then return o end
-		if t:match("^%d+$") then return tonumber(t) end -- 2
-		return NUMBER_WORDS[t] -- two
+		if t:match("^%d+$") then return tonumber(t) end
+		return NUMBER_WORDS[t]
 	end
 	
-	-- Devuelve: respuesta | false (pregunta de ranking sin dato) | nil (no es de ranking)
+	-- PASO 3: matchRanked actualizado con soporte para bloques de la suerte (Skull Lucky Block)
 	local function matchRanked(tk)
-		local hasMachine = false
+		local hasMachine, hasBlock = false, false
 		for _, t in ipairs(tk) do
-			if DLC_WORDS[t] then return nil end -- es pregunta de DLC, que decida matchRule
+			if DLC_WORDS[t] then return nil end
 			if MACHINE_WORDS[t] then hasMachine = true end
+			if BLOCK_WORDS[t] then hasBlock = true end
 		end
 	
 		for p, t in ipairs(tk) do
 			if BRAINROT_WORDS[t] then
 				local rank
 	
-				-- Antes de "brainrot": "2nd best brainrot", "the 2 best brainrot", "two brainrot"
 				for q = p - 1, math.max(1, p - 4), -1 do
 					local w = tk[q]
 					rank = rankOf(w)
@@ -310,17 +356,17 @@ do
 					if not RANK_FILLER[w] then break end
 				end
 	
-				-- Después: "brainrot 2", "brainrot number 2" (sin confundir con "2 times")
 				if not rank then
 					local k = p + 1
-					if tk[k] == "number" or tk[k] == "no" then k += 1 end
+					if tk[k] == "number" or tk[k] == "no" then k = k + 1 end
 					local r = tk[k] and rankOf(tk[k])
 					if r and tk[k + 1] ~= "time" and tk[k + 1] ~= "times" then rank = r end
 				end
 	
 				if rank and rank <= 20 then
-					if rank == 1 and not hasMachine then return nil end
-					return MACHINE_RANKING[rank] or false
+					if rank == 1 and not hasMachine and not hasBlock then return nil end
+					local list = hasBlock and LUCKY_RANKING or MACHINE_RANKING
+					return list[rank] or false
 				end
 			end
 		end
@@ -333,7 +379,7 @@ do
 		if n == 0 then return nil end
 
 		local ranked = matchRanked(tk)
-		if ranked == false then return nil end -- ranking que aún no tienes cargado
+		if ranked == false then return nil end
 		if ranked then return string.rep(ranked, tailRepeat(tk)) end
 
 		local ruled = matchRule(tk)
@@ -353,7 +399,7 @@ do
 					break
 				end
 			end
-			if not matched then i += 1 end
+			if not matched then i = i + 1 end
 		end
 		if #out > 0 then return table.concat(out) end
  
