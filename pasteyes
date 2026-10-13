@@ -197,6 +197,8 @@ do
 	local function eventRules(mon, day, yr, wd, ...)
 		rule(mon .. day .. yr, "month", "day", "year", ...)
 		rule(mon .. yr, "month", "year", ...)
+		rule(day .. yr, "day", "year", ...)      -- NUEVA
+		rule(day, "day", ...)                    -- NUEVA
 		rule(mon .. day, "month", "day", ...)
 		rule(mon, "month", ...)
 		rule(yr, "year", ...)
@@ -263,17 +265,16 @@ do
 	rule("FESTIVE67", "cant|cannot|never|without|no", "mutation|mutations|mutated", "plush|plushie|plushies|dlc", BRAIN)
 
 	local MUT_DATES = {
-		{ "gold", "MAY", "31", "2025" }, { "diamond", "MAY", "31", "2025" },
-		{ "rainbow", "JUNE", "21", "2025" }, { "candy", "JULY", "5", "2025" },
-		{ "lava", "JULY", "25", "2025" }, { "galaxy", "AUGUST", "23", "2025" },
-		{ "yin", "SEPTEMBER", "27", "2025" }, { "radioactive", "NOVEMBER", "15", "2025" },
-		{ "cursed", "JANUARY", "3", "2026" }, { "divine", "FEBRUARY", "21", "2026" },
-		{ "cyber", "APRIL", "18", "2026" }, { "phantom", "JUNE", "13", "2026" },
-		{ "crystal", "JULY", "25", "2026" }, { "eclipse", "OCTOBER", "2", "2026" },
+		{ "gold", "MAY", "31", "2025", "SATURDAY" }, { "diamond", "MAY", "31", "2025", "SATURDAY" },
+		{ "rainbow", "JUNE", "21", "2025", "SATURDAY" }, { "candy", "JULY", "5", "2025", "SATURDAY" },
+		{ "lava", "JULY", "25", "2025", "FRIDAY" }, { "galaxy", "AUGUST", "23", "2025", "SATURDAY" },
+		{ "yin", "SEPTEMBER", "27", "2025", "SATURDAY" }, { "radioactive", "NOVEMBER", "15", "2025", "SATURDAY" },
+		{ "cursed", "JANUARY", "3", "2026", "SATURDAY" }, { "divine", "FEBRUARY", "21", "2026", "SATURDAY" },
+		{ "cyber", "APRIL", "18", "2026", "SATURDAY" }, { "phantom", "JUNE", "13", "2026", "SATURDAY" },
+		{ "crystal", "JULY", "25", "2026", "SATURDAY" }, { "eclipse", "OCTOBER", "2", "2026", "FRIDAY" },
 	}
 	for _, d in ipairs(MUT_DATES) do
-		rule(d[2], d[1], "mutation|mutations", "month")
-		rule(d[4], d[1], "mutation|mutations", "year")
+		eventRules(d[2], d[3], d[4], d[5], d[1], "mutation|mutations")
 	end
 	for _, d in ipairs(MUT_DATES) do
 		rule(d[2] .. d[3] .. d[4], d[1], "mutation|mutations", "released|release|added|made|came|date|out|introduced|created")
@@ -495,20 +496,56 @@ do
 		return nil
 	end
 
+	local FIELD_WORDS = { month = true, months = true, day = true, days = true, year = true, years = true, date = true, week = true, weekday = true }
+	local FRAG_FILLER = { ["of"] = true, ["the"] = true, ["and"] = true, ["when"] = true, ["was"] = true, ["is"] = true, ["what"] = true, ["a"] = true, ["in"] = true, ["which"] = true }
+	local function isFragment(text)
+		local hasField = false
+		for _, t in ipairs(tokenize(text)) do
+			if FIELD_WORDS[t] then hasField = true
+			elseif not FRAG_FILLER[t] then return false end
+		end
+		return hasField
+	end
+	local function stripFields(text)
+		local r = {}
+		for _, t in ipairs(tokenize(text)) do
+			if not FIELD_WORDS[t] then r[#r + 1] = t end
+		end
+		return table.concat(r, " ")
+	end
+
 	solveRiddle = function(raw)
 		local text = tostring(raw or "")
-		local out = {}
+		local clauses = {}
 		for clause in (text .. "+"):gmatch("([^%+,;&|\n]*)[%+,;&|\n]") do
-			if clause:find("%S") then
-				local a = solveClause(clause)
-				if a then out[#out + 1] = a end
+			if clause:find("%S") then clauses[#clauses + 1] = clause end
+		end
+		local frag = {}
+		for i, c in ipairs(clauses) do frag[i] = isFragment(c) end
+
+		local out = {}
+		for i, clause in ipairs(clauses) do
+			local a
+			if frag[i] then
+				local ctx
+				for j = i + 1, #clauses do if not frag[j] then ctx = clauses[j] break end end
+				if not ctx then
+					for j = i - 1, 1, -1 do if not frag[j] then ctx = clauses[j] break end end
+				end
+				if ctx then
+					a = solveClause(clause .. " " .. stripFields(ctx))
+					if a == solveClause(ctx) then a = nil end
+				end
+			else
+				a = solveClause(clause)
 			end
+			if a then out[#out + 1] = a end
 		end
 		if #out == 0 then return nil end
 		local s = table.concat(out)
 		s = s:upper():gsub("%s+", "")
 		return s
 	end
-end
+end   
 
 return solveRiddle
