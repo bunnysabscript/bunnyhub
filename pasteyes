@@ -166,7 +166,6 @@ do
 	rule(DRAGON_ANSWER, "first|1st", "dragon", "lucky", BLOCKW)
 	rule("ORCHIDOX", "surpass|surpasses|surpassed|surpassing|beats|beat|replaced", "lucky", BLOCKW)
 	rule("13", "months|month", "extinct", "event", "after|since|later|added")
-	eventRules("OCTOBER", "8", "2026", "THURSDAY", "leaked|leak|revealed", "model|finished", "skeletonini|dragon")
 
 	-- trivia de Flying Dutchman
 	rule("FLYINGDUTCHMAN", "captain|captains", "dutchman|flying|folklore")
@@ -212,6 +211,7 @@ do
 		rule(answer, unpack_(groups))
 	end
 
+	eventRules("OCTOBER", "8", "2026", "THURSDAY", "leaked|leak|revealed", "model|finished", "skeletonini|dragon")
 	-- ---------- Haunted Fuse ----------
 	eventRules("OCTOBER", "3", "2026", "SATURDAY", "haunted", "fuse", REL)
 	rule("CRAFTMACHINE", "haunted", "fuse", REPLW .. "|" .. PREVW .. "|last")
