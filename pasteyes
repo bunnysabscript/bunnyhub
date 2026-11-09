@@ -1,7 +1,6 @@
 --[[
-  UPDATE 70 · HALLOWEEN  —  respuestas nuevas + 3 arreglos
-  + FUSE MACHINE (2025/2026) y HAUNTED FUSE (wiki)
-  + MERGED: RiddleDatabase external (Aetherion Auto Code Redeemer)
+  UPDATE 71 · DLC BRAINROTS — Arca Bros, Slushi Huski, Cobra Gelato
+  + riddles para best/rarest/newest dlc, códigos, stats, trivia
 ]]
 
 local solveRiddle
@@ -242,6 +241,40 @@ do
 	rule("BOPPINBUNNY", FIRST, "plush|plushie|plushies|dlc", BRAIN, "mutation|mutations|mutated")
 	rule("FESTIVE67", "cant|cannot|never|without|no", "mutation|mutations|mutated", "plush|plushie|plushies|dlc", BRAIN)
 
+	-- ==================== UPDATE 71 · DLC RULES ====================
+	local DLCW = "dlc|merch|merchshop|minifigure|minifigures|code|codes|figure|figures"
+	local BESTDLCW = "best|top|highest|rarest|strongest|richest|op|most|powerful"
+	local WORSTDLCW = "worst|lowest|weakest|cheapest|least|common|cheapest"
+
+	-- Arca Bros: best/rarest/most op DLC brainrot
+	rule("ARCABROS", BESTDLCW, DLCW, BRAINW)
+	rule("ARCABROS", BESTDLCW, DLCW)
+	rule("ARCABROS", NEWW, BESTDLCW, DLCW, BRAINW)
+	rule("ARCABROS", NEWW, BESTDLCW, DLCW)
+
+	-- Slushi Huski: newest/latest DLC brainrot god
+	rule("SLUSHIHUSKI", NEWW, DLCW, "god|brainrot god")
+	rule("SLUSHIHUSKI", NEWW, DLCW, "brainrot|brainrots")
+	rule("SLUSHIHUSKI", NEWW .. "|latest|recent", DLCW)
+	rule("SLUSHIHUSKI", "first|1st", "husky|huskies", BRAINW)
+	rule("SLUSHIHUSKI", "first|1st", "husky|huskies")
+
+	-- Cobra Gelato: newest/latest DLC secret
+	rule("COBRAGELATO", NEWW, DLCW, "secret|secrets")
+	rule("COBRAGELATO", "first|1st", "cobra", BRAINW)
+	rule("COBRAGELATO", "first|1st", "cobra")
+	rule("COBRAGELATO", "serpent|snake|gelato|ice cream|dessert", DLCW, BRAINW)
+
+	-- Arcadragon: previous best DLC brainrot
+	rule("ARCADRAGON", "previous|before|prior|old|last", BESTDLCW, DLCW, BRAINW)
+	rule("ARCADRAGON", "previous|before|prior|old|last", BESTDLCW, DLCW)
+
+	-- PANCAKEANDSYRUP: code riddles
+	rule("PANCAKEANDSYRUP", "rarest|best|highest|top", DLCW, BRAINW, "first|1st|original|earliest|minifigure|minifigures|figure|figures")
+	rule("PANCAKEANDSYRUP", "code", "arca|arcabros|arca bros")
+	rule("PANCAKEANDSYRUP", "arca bros", "code|codes|redeem|redeemed")
+	rule("PANCAKEANDSYRUP", "first|1st", "minifigure|minifigures|figure|figures", DLCW, "rarest|best|secret")
+
 	local MUT_DATES = {
 		{ "gold", "MAY", "31", "2025", "SATURDAY" }, { "diamond", "MAY", "31", "2025", "SATURDAY" },
 		{ "rainbow", "JUNE", "21", "2025", "SATURDAY" }, { "candy", "JULY", "5", "2025", "SATURDAY" },
@@ -275,8 +308,6 @@ do
 		"now|current|currently|today|happening|ongoing|active|live|present|going|new|newest|latest")
 
 	-- ==================== EXTERNAL DB INJECTION ====================
-	-- Inject entri dari RiddleDatabase (Aetherion) ke INDEX engine ini.
-	-- Hanya di-inject jika KEY belum ada di INDEX (prioritas engine asli).
 	local ExternalDB = {
 		["1 1 brainrot"] = "155", ["1 1 exist"] = "155", ["1 of 1"] = "1of1",
 		["1 of 1 brainrots"] = "155", ["1 of 1 brainrots exist"] = "155",
@@ -292,7 +323,7 @@ do
 		["3 brainrots reworked"] = "sammynispyderiniunclitosamitogattatinonyanino",
 		["3 headed"] = "hydraserpent", ["3 headed brainrot"] = "hydraserpent",
 		["3 headed snake"] = "hydraserpent",
-		["admin abuse"] = "jandel", ["admin abuse brainrot"] = "lupaandlipa",
+		["admin abuse"] = "jandel", ["admin abuse brainrot"] = "HEADLESSHORSEMAN",
 		["admin abuse trait"] = "sleepy",
 		["age"] = "24",
 		["all brainrots that got removed"] = "tungtungtungsahurcrocidilopenisini",
@@ -307,20 +338,20 @@ do
 		["bee lucky block best brainrot"] = "orchidox",
 		["bee lucky block brainrot"] = "orchidox",
 		["beeloco"] = "beeloco",
-		["best admin abuse brainrot"] = "lupaandlipa",
+		["best admin abuse brainrot"] = "HEADLESSHORSEMAN",
 		["best bee block"] = "orchidox",
 		["best bee brainrot"] = "orchidox",
 		["best bee lucky"] = "orchidox",
 		["best bee lucky block"] = "orchidox",
 		["best bee lucky block brainrot"] = "orchidox",
-		["best brainrot"] = "lupaandlipa",
+		["best brainrot"] = "HEADLESSHORSEMAN",
 		["best brainrot added"] = "hydraserpent",
 		["best brainrot added last saturday"] = "orchidox",
 		["best brainrot added last week"] = "orchidox",
 		["best brainrot from bee lucky block"] = "orchidox",
 		["best brainrot in bee lucky block"] = "orchidox",
-		["best brainrot in game"] = "lupaandlipa",
-		["best brainrot in the game"] = "lupaandlipa",
+		["best brainrot in game"] = "HEADLESSHORSEMAN",
+		["best brainrot in the game"] = "HEADLESSHORSEMAN",
 		["best brainrot last week"] = "orchidox",
 		["best brainrot released last saturday"] = "orchidox",
 		["best brainrot released last week"] = "orchidox",
@@ -582,7 +613,7 @@ do
 		["most expensive item i have"] = "spyderchain",
 		["most expensive taco"] = "latacocombinasion",
 		["most expensive taco merchant"] = "sammynitruckini",
-		["most op brainrot"] = "lupaandlipa",
+		["most op brainrot"] = "HEADLESSHORSEMAN",
 		["most op brainrot added last saturday"] = "orchidox",
 		["most op brainrot added last week"] = "orchidox",
 		["my 2nd name"] = "brakta",
@@ -658,7 +689,7 @@ do
 		["og fuse machine"] = "january2026",
 		["oldest fuse"] = "lafusemachine",
 		["oldest machine"] = "rainbowmachine",
-		["op brainrot"] = "lupaandlipa",
+		["op brainrot"] = "HEADLESSHORSEMAN",
 		["op brainrot added last saturday"] = "orchidox",
 		["op brainrot added last week"] = "orchidox",
 		["orchideon"] = "orchidox",
@@ -802,7 +833,7 @@ do
 		["strawberry elephant exist"] = "2348",
 		["strawberry elephants exist"] = "2348",
 		["strawberryelephant"] = "strawberryelephant",
-		["strongest brainrot"] = "lupaandlipa",
+		["strongest brainrot"] = "HEADLESSHORSEMAN",
 		["studio i hate"] = "secretverse",
 		["summer fuse"] = "summerfuse",
 		["summer fuse machine"] = "summerfuse",
@@ -826,8 +857,8 @@ do
 		["three headed snake"] = "hydraserpent",
 		["tipi topi taco"] = "tipitopitaco",
 		["tipitopitaco"] = "tipitopitaco",
-		["today admin abuse brainrot"] = "lupaandlipa",
-		["todays admin abuse brainrot"] = "lupaandlipa",
+		["today admin abuse brainrot"] = "HEADLESSHORSEMAN",
+		["todays admin abuse brainrot"] = "HEADLESSHORSEMAN",
 		["toilet color"] = "white",
 		["tombstone trait"] = "riptombstone",
 		["top mutation"] = "crystal",
@@ -898,13 +929,94 @@ do
 		["yin yang"] = "yinyang", ["yin yang mutation"] = "yinyang",
 		["yinyang"] = "yinyang", ["yinyang mutation"] = "yinyang",
 		["zombie trait"] = "tungtung",
-		-- Tambahan unik dari external DB yang belum ada di engine asli
 		["my age"] = "24",
 		["my birth year"] = "2002",
 		["my cat name"] = "nova",
 		["my boyfriend"] = "steakwad",
 		["do i have tiktok"] = "yes",
 		["do i have youtube"] = "yes",
+
+		-- ==================== UPDATE 71 · DLC BRAINROTS ====================
+		-- ARCA BROS
+		["arca bros"] = "arcabros",
+		["arcabros"] = "arcabros",
+		["best dlc brainrot"] = "arcabros",
+		["best dlc"] = "arcabros",
+		["best dlc secret"] = "arcabros",
+		["rarest dlc brainrot"] = "arcabros",
+		["rarest dlc"] = "arcabros",
+		["most op dlc brainrot"] = "arcabros",
+		["most op dlc"] = "arcabros",
+		["new best dlc brainrot"] = "arcabros",
+		["new best dlc"] = "arcabros",
+		["newest best dlc brainrot"] = "arcabros",
+		["top dlc brainrot"] = "arcabros",
+		["arca bros income"] = "250ms",
+		["arcabros income"] = "250ms",
+		["arca bros cost"] = "250b",
+		["arcabros cost"] = "250b",
+		["arca bros stats"] = "250ms250b",
+		["arca bros rarity"] = "secret",
+		["arcabros rarity"] = "secret",
+		-- Code
+		["code for arca bros"] = "pancakeandsyrup",
+		["arca bros code"] = "pancakeandsyrup",
+		["arcabros code"] = "pancakeandsyrup",
+		["what is the code for arca bros"] = "pancakeandsyrup",
+		["how to get arca bros code"] = "pancakeandsyrup",
+		["first minifigure dlc rarest brainrot"] = "pancakeandsyrup",
+		["rarest brainrot from first minifigures"] = "pancakeandsyrup",
+		["rarest dlc brainrot obtained from first minifigures we released"] = "pancakeandsyrup",
+		["what was the rarest dlc brainrot obtained from the first minifigures we released"] = "pancakeandsyrup",
+		-- Trivia
+		["arca bros leaked"] = "steak",
+		["who leaked arca bros"] = "steak",
+		["where was arca bros leaked"] = "steak",
+		["previous best dlc brainrot"] = "arcadragon",
+		["dlc brainrot before arca bros"] = "arcadragon",
+		["best dlc before arca bros"] = "arcadragon",
+		["arca bros exist"] = "100",
+		["arcabros exist"] = "100",
+		["how many arca bros exist"] = "100",
+
+		-- SLUSHI HUSKI
+		["slushi huski"] = "slushihuski",
+		["slushihuski"] = "slushihuski",
+		["new dlc brainrot god"] = "slushihuski",
+		["newest dlc brainrot god"] = "slushihuski",
+		["latest dlc brainrot god"] = "slushihuski",
+		["new dlc god"] = "slushihuski",
+		["newest dlc god"] = "slushihuski",
+		["first husky brainrot"] = "slushihuski",
+		["husky brainrot"] = "slushihuski",
+		["slushi huski rarity"] = "brainrotgod",
+		["slushihuski rarity"] = "brainrotgod",
+		["slushi huski income"] = "322.5ks",
+		["slushihuski income"] = "322.5ks",
+		["slushi huski cost"] = "78m",
+		["slushihuski cost"] = "78m",
+
+		-- COBRA GELATO
+		["cobra gelato"] = "cobragelato",
+		["cobragelato"] = "cobragelato",
+		["new dlc secret"] = "cobragelato",
+		["newest dlc secret brainrot"] = "cobragelato",
+		["latest dlc secret"] = "cobragelato",
+		["cobra brainrot"] = "cobragelato",
+		["gelato brainrot"] = "cobragelato",
+		["cobra gelato rarity"] = "secret",
+		["cobragelato rarity"] = "secret",
+		["cobra gelato income"] = "77.5ms",
+		["cobragelato income"] = "77.5ms",
+		["cobra gelato cost"] = "23.5b",
+		["cobragelato cost"] = "23.5b",
+		["first cobra brainrot"] = "cobragelato",
+		["ice cream serpent brainrot"] = "cobragelato",
+		["dessert snake brainrot"] = "cobragelato",
+
+		-- ARCADRAGON (previous best DLC)
+		["arcadragon"] = "arcadragon",
+		["arca dragon"] = "arcadragon",
 	}
 
 	-- Inject ke INDEX (hanya jika belum ada)
