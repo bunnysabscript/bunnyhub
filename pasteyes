@@ -82,7 +82,17 @@ do
 	fact("MAY162025", "date made|game release|game release date|game released|release date|sab release|sab released|when made|when was sab created|when was sab made|when was sab released")
 	fact("MAY", "release month|month sab was made|sab release month")
 	fact("2025", "release year|year created|year made|year of sab|year sab was created|year sab was made")
-	fact(function() return tostring(os.date("%Y")) end, "year we are on|year were on")
+	fact(function()
+	    return tostring(os.date("%Y"))
+	end, "year we are on|year were on|what year is it")
+	
+	fact(function()
+	    return tostring(tonumber(os.date("%d")))
+	end, "what day of the month is it|day of the month|what is today's date|today's day")
+	
+	fact(function()
+	    return os.date("%B")
+	end, "what is the current month|current month name|name of this month")
 	fact("COMMON", "common rarity|lowest rarity")
 	fact("OG", "highest rarity|rarest rarity|top rarity")
 	fact("HEADLESSHORSEMAN", "rarest|rarest brainrot|headless horseman")
