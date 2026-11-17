@@ -1,6 +1,11 @@
 --[[
-  UPDATE 71 · DLC BRAINROTS — Arca Bros, Slushi Huski, Cobra Gelato
-  + riddles para best/rarest/newest dlc, códigos, stats, trivia
+  UPDATE 75 · BROS MACHINE — Noobini/Spinny/Tang/Nacho/Tic/Scorpi/Machine/Sammyni/Cabin/Scary Bros
+  + Update 75 buffs/nerfs
+  + DLC brainrots: Arca Bros, Slushi Huski, Cobra Gelato
+  + Bros Machine brainrot data, craft recipes, income
+  + Taco favorite answer
+  + Admin Abuse exclusive: Dragon Cannelloni, Strawberry Elephant
+  RIDDLE ENGINE v2 — full fact + rule base
 ]]
 
 local solveRiddle
@@ -19,7 +24,7 @@ do
 		"RAINBOWMACHINE", "BUBBLEGUMMACHINE", "FUSEMACHINE", "CRAFTMACHINE", "WITCHFUSE",
 		"BRAINROTDEALER", "BRAINROTTRADER", "SANTASFUSE", "SANTASSHOP", "NEWYEARSMACHINE",
 		"DUELSMACHINE", "CUPIDSMACHINE", "TRADEMACHINE", "DIVINEFUSE", "EGGINCUBATOR",
-		"CYBERCRAFTMACHINE", "SUMMERFUSE", "LOSTRADERS", "HAUNTEDFUSE" }
+		"CYBERCRAFTMACHINE", "SUMMERFUSE", "LOSTRADERS", "HAUNTEDFUSE", "BROSMACHINE" }
 
 	local MUTATIONS = { "GOLD", "DIAMOND", "RAINBOW", "BLOODROT", "CANDY", "LAVA", "GALAXY",
 		"YINYANG", "RADIOACTIVE", "CURSED", "DIVINE", "CYBER", "PHANTOM", "CRYSTAL", "ECLIPSE" }
@@ -83,15 +88,13 @@ do
 	fact("MAY", "release month|month sab was made|sab release month")
 	fact("2025", "release year|year created|year made|year of sab|year sab was created|year sab was made")
 	fact(function()
-	    return tostring(os.date("%Y"))
+		return tostring(os.date("%Y"))
 	end, "year we are on|year were on|what year is it")
-	
 	fact(function()
-	    return tostring(tonumber(os.date("%d")))
+		return tostring(tonumber(os.date("%d")))
 	end, "what day of the month is it|day of the month|what is today's date|today's day")
-	
 	fact(function()
-	    return os.date("%B")
+		return os.date("%B")
 	end, "what is the current month|current month name|name of this month")
 	fact("COMMON", "common rarity|lowest rarity")
 	fact("OG", "highest rarity|rarest rarity|top rarity")
@@ -127,6 +130,59 @@ do
 	fact("BLOODROT", "bloodrot|bloodrot mutation|dark red")
 	fact("REAPERBASE", "new base|newest base|latest base|last base|new robux base|robux base|new base with robux|new base i added|base i added|new base for robux|newest robux base")
 	fact("PLANTBROS", "best brainrot in the new machine|best brainrot in the last machine|best brainrot in the latest machine|best brainrot in the newest machine|new machine best brainrot|last machine best brainrot")
+
+	-- ==================== TACO FAVORITE ====================
+	fact("CARNEASADA", "favorite kind of tacos|favorite taco kind|favorite taco type|what kind of tacos do i like|my favorite taco|sammy favorite taco|sammy taco kind|favorite taco flavor|best taco kind|my taco kind|what is my favorite kind of tacos|what are my favorite tacos")
+
+	-- ==================== UPDATE 75 · BROS MACHINE FACTS ====================
+	-- Machine meta
+	fact("NOVEMBER142026", "bros machine release date|when did bros machine release|bros machine released|update 75 release date|update 75 date")
+	fact("NOVEMBER", "bros machine release month|update 75 month")
+	fact("2026", "bros machine release year|update 75 year")
+	fact("10", "how many brainrots in bros machine|bros machine brainrot count|how many bros brainrots")
+	fact("HAUNTEDFUSE", "machine before bros machine|previous machine before bros|bros machine previous machine")
+	fact("CHRISTMASFUSE", "machine after bros machine|next machine after bros|bros machine next machine")
+
+	-- Individual Bros brainrots — income & rarity
+	fact("SECRET", "noobini bros rarity|spinny bros rarity|tang bros rarity|nacho bros rarity|tic bros rarity|scorpi bros rarity|machine bros rarity|sammyni bros rarity|cabin bros rarity|scary bros rarity")
+
+	fact("11MS", "noobini bros income|noobinibros income")
+	fact("61.5MS", "spinny bros income|spinnybros income")
+	fact("64MS", "tang bros income|tangbros income")
+	fact("82.5MS", "nacho bros income|nachobros income")
+	fact("94MS", "tic bros income|tictacbros income|tictac bros income")
+	fact("110MS", "scorpi bros income|scorpibros income")
+	fact("145MS", "machine bros income|machinebros income")
+	fact("177.5MS", "sammyni bros income|sammnibros income|sammyni bros income")
+	fact("205MS", "cabin bros income|cabinbros income")
+	fact("230MS", "scary bros income|scarybros income")
+
+	-- Best/worst in Bros Machine
+	fact("SCARYBROS", "best brainrot in bros machine|highest income bros machine|most valuable bros brainrot|top bros brainrot|rarest bros brainrot|strongest bros brainrot")
+	fact("NOOBINIBROS", "worst brainrot in bros machine|cheapest bros brainrot|lowest income bros machine|least valuable bros brainrot|weakest bros brainrot")
+
+	-- Admin Abuse exclusives inside Bros Machine
+	fact("DRAGONCANNELLONI", "admin abuse brainrot bros machine|dragon cannelloni income|admin exclusive bros machine")
+	fact("250MS", "dragon cannelloni income|dragoncannelloni income")
+	fact("750MS", "strawberry elephant income|strawberryelephant income")
+
+	-- Craft recipes — notable ones
+	fact("NOOBINIPIZZANININOOBINISANTANINI", "noobini bros recipe|how to craft noobini bros|noobini bros craft")
+	fact("LAFUSEMACHINELACRAFTMACHINE", "machine bros recipe|how to craft machine bros|machine bros craft")
+	fact("DRACULINOARCABROS", "strawberry elephant recipe|how to craft strawberry elephant|strawberry elephant craft")
+	fact("GARAMADUNDUNGLASET COMBINASION", "dragon cannelloni recipe|how to craft dragon cannelloni|dragon cannelloni craft")
+
+	-- Craft times
+	fact("5MINUTES", "noobini bros craft time")
+	fact("15MINUTES", "spinny bros craft time|tang bros craft time")
+	fact("30MINUTES", "nacho bros craft time|tic bros craft time|scorpi bros craft time")
+	fact("45MINUTES", "machine bros craft time|sammyni bros craft time")
+	fact("1HOUR", "cabin bros craft time|scary bros craft time")
+
+	-- Update 75 buffs notable
+	fact("350MS", "plant bros income after buff|plant bros new income|plantbros buffed income")
+	fact("300MS", "polaroidini income after buff|polaroidini new income")
+	fact("250MS", "draculino income after buff|draculino new income")
 
 	-- ==================== RULES ====================
 	local RULES = {}
@@ -215,6 +271,26 @@ do
 	rule("JUMPFOREGGS", "haunted", "fuse", "last|previous|before|prior|preceded", "event|ltm")
 	rule("LOSTREATERS", "haunted", "fuse", "lowest|worst|weakest|cheapest|least", "secret|secrets|brainrot|brainrots")
 
+	-- ==================== UPDATE 75 · BROS MACHINE RULES ====================
+	eventRules("NOVEMBER", "14", "2026", "SATURDAY", "bros", MACH, REL)
+	eventRules("NOVEMBER", "14", "2026", "SATURDAY", "update", "75", REL)
+
+	rule("BROSMACHINE", NEWW, MACH)
+	rule("BROSMACHINE", "75|seventyfive|seventy five", "update")
+	rule("BROSMACHINE", NEWW, "bros", MACH)
+	rule("HAUNTEDFUSE", "bros", MACH, PREVW .. "|" .. "before|prior|last")
+	rule("CHRISTMASFUSE", "bros", MACH, NEXTW)
+	rule("SCARYBROS", BESTW, "brainrot|brainrots|secret", "bros", MACH)
+	rule("NOOBINIBROS", WORSTW, "brainrot|brainrots|secret", "bros", MACH)
+	rule("10", "how", "many", "brainrot|brainrots|secret", "bros", MACH)
+	rule("NOVEMBER142026", "when", "bros", MACH, REL)
+
+	-- Bros Machine craft: notable rules
+	rule("NOOBINIPIZZANININOOBINISANTANINI", "craft|recipe|make|how", "noobini", "bros")
+	rule("DRACULINOARCABROS", "craft|recipe|make|how", "strawberry", "elephant", "bros", MACH)
+	rule("LAFUSEMACHINELACRAFTMACHINE", "craft|recipe|make|how", "machine", "bros")
+
+	-- ============ FUSE MACHINE RULES (kept from original) ============
 	eventRules("AUGUST", "1", "2025", "FRIDAY", "fuse", MACH, F25, REL)
 	eventRules("SEPTEMBER", "6", "2025", "SATURDAY", "fuse", MACH, F25, REMW)
 	eventRules("JANUARY", "24", "2026", "SATURDAY", "fuse", MACH, RETW)
@@ -256,30 +332,25 @@ do
 	local BESTDLCW = "best|top|highest|rarest|strongest|richest|op|most|powerful"
 	local WORSTDLCW = "worst|lowest|weakest|cheapest|least|common|cheapest"
 
-	-- Arca Bros: best/rarest/most op DLC brainrot
 	rule("ARCABROS", BESTDLCW, DLCW, BRAINW)
 	rule("ARCABROS", BESTDLCW, DLCW)
 	rule("ARCABROS", NEWW, BESTDLCW, DLCW, BRAINW)
 	rule("ARCABROS", NEWW, BESTDLCW, DLCW)
 
-	-- Slushi Huski: newest/latest DLC brainrot god
 	rule("SLUSHIHUSKI", NEWW, DLCW, "god|brainrot god")
 	rule("SLUSHIHUSKI", NEWW, DLCW, "brainrot|brainrots")
 	rule("SLUSHIHUSKI", NEWW .. "|latest|recent", DLCW)
 	rule("SLUSHIHUSKI", "first|1st", "husky|huskies", BRAINW)
 	rule("SLUSHIHUSKI", "first|1st", "husky|huskies")
 
-	-- Cobra Gelato: newest/latest DLC secret
 	rule("COBRAGELATO", NEWW, DLCW, "secret|secrets")
 	rule("COBRAGELATO", "first|1st", "cobra", BRAINW)
 	rule("COBRAGELATO", "first|1st", "cobra")
 	rule("COBRAGELATO", "serpent|snake|gelato|ice cream|dessert", DLCW, BRAINW)
 
-	-- Arcadragon: previous best DLC brainrot
 	rule("ARCADRAGON", "previous|before|prior|old|last", BESTDLCW, DLCW, BRAINW)
 	rule("ARCADRAGON", "previous|before|prior|old|last", BESTDLCW, DLCW)
 
-	-- PANCAKEANDSYRUP: code riddles
 	rule("PANCAKEANDSYRUP", "rarest|best|highest|top", DLCW, BRAINW, "first|1st|original|earliest|minifigure|minifigures|figure|figures")
 	rule("PANCAKEANDSYRUP", "code", "arca|arcabros|arca bros")
 	rule("PANCAKEANDSYRUP", "arca bros", "code|codes|redeem|redeemed")
@@ -501,6 +572,14 @@ do
 		["favorite number"] = "67",
 		["favorite phone"] = "iphone",
 		["favorite singer"] = "drake",
+		["favorite taco"] = "carneasada",
+		["favorite taco kind"] = "carneasada",
+		["favorite taco type"] = "carneasada",
+		["favorite kind of tacos"] = "carneasada",
+		["my favorite taco"] = "carneasada",
+		["my favorite kind of tacos"] = "carneasada",
+		["sammy favorite taco"] = "carneasada",
+		["what is my favorite kind of tacos"] = "carneasada",
 		["first bee brainrot"] = "beeloco",
 		["first brainrot"] = "noobinipizzanini",
 		["first brainrot god"] = "tralalerotralala",
@@ -947,7 +1026,6 @@ do
 		["do i have youtube"] = "yes",
 
 		-- ==================== UPDATE 71 · DLC BRAINROTS ====================
-		-- ARCA BROS
 		["arca bros"] = "arcabros",
 		["arcabros"] = "arcabros",
 		["best dlc brainrot"] = "arcabros",
@@ -968,7 +1046,6 @@ do
 		["arca bros stats"] = "250ms250b",
 		["arca bros rarity"] = "secret",
 		["arcabros rarity"] = "secret",
-		-- Code
 		["code for arca bros"] = "pancakeandsyrup",
 		["arca bros code"] = "pancakeandsyrup",
 		["arcabros code"] = "pancakeandsyrup",
@@ -976,9 +1053,6 @@ do
 		["how to get arca bros code"] = "pancakeandsyrup",
 		["first minifigure dlc rarest brainrot"] = "pancakeandsyrup",
 		["rarest brainrot from first minifigures"] = "pancakeandsyrup",
-		["rarest dlc brainrot obtained from first minifigures we released"] = "pancakeandsyrup",
-		["what was the rarest dlc brainrot obtained from the first minifigures we released"] = "pancakeandsyrup",
-		-- Trivia
 		["arca bros leaked"] = "steak",
 		["who leaked arca bros"] = "steak",
 		["where was arca bros leaked"] = "steak",
@@ -989,7 +1063,6 @@ do
 		["arcabros exist"] = "100",
 		["how many arca bros exist"] = "100",
 
-		-- SLUSHI HUSKI
 		["slushi huski"] = "slushihuski",
 		["slushihuski"] = "slushihuski",
 		["new dlc brainrot god"] = "slushihuski",
@@ -1006,7 +1079,6 @@ do
 		["slushi huski cost"] = "78m",
 		["slushihuski cost"] = "78m",
 
-		-- COBRA GELATO
 		["cobra gelato"] = "cobragelato",
 		["cobragelato"] = "cobragelato",
 		["new dlc secret"] = "cobragelato",
@@ -1024,12 +1096,111 @@ do
 		["ice cream serpent brainrot"] = "cobragelato",
 		["dessert snake brainrot"] = "cobragelato",
 
-		-- ARCADRAGON (previous best DLC)
 		["arcadragon"] = "arcadragon",
 		["arca dragon"] = "arcadragon",
+
+		-- ==================== UPDATE 75 · BROS MACHINE ====================
+		["bros machine"] = "brosmachine",
+		["brosmachine"] = "brosmachine",
+		["new machine"] = "brosmachine",
+		["newest machine"] = "brosmachine",
+		["latest machine"] = "brosmachine",
+		["last machine"] = "brosmachine",
+		["current machine"] = "brosmachine",
+		["update 75"] = "brosmachine",
+		["bros update"] = "brosmachine",
+		["noobini bros"] = "noobinibros",
+		["noobinibros"] = "noobinibros",
+		["spinny bros"] = "spinnybros",
+		["spinnybros"] = "spinnybros",
+		["tang bros"] = "tangbros",
+		["tangbros"] = "tangbros",
+		["nacho bros"] = "nachobros",
+		["nachobros"] = "nachobros",
+		["tic bros"] = "ticbros",
+		["tictac bros"] = "ticbros",
+		["ticbros"] = "ticbros",
+		["scorpi bros"] = "scorpibros",
+		["scorpibros"] = "scorpibros",
+		["machine bros"] = "machinebros",
+		["machinebros"] = "machinebros",
+		["sammyni bros"] = "sammynibros",
+		["sammynibros"] = "sammynibros",
+		["cabin bros"] = "cabinbros",
+		["cabinbros"] = "cabinbros",
+		["scary bros"] = "scarybros",
+		["scarybros"] = "scarybros",
+
+		-- Bros Machine income answers
+		["noobini bros income"] = "11ms",
+		["spinny bros income"] = "61.5ms",
+		["tang bros income"] = "64ms",
+		["nacho bros income"] = "82.5ms",
+		["tic bros income"] = "94ms",
+		["scorpi bros income"] = "110ms",
+		["machine bros income"] = "145ms",
+		["sammyni bros income"] = "177.5ms",
+		["cabin bros income"] = "205ms",
+		["scary bros income"] = "230ms",
+
+		-- Bros Machine craft times
+		["noobini bros craft time"] = "5minutes",
+		["spinny bros craft time"] = "15minutes",
+		["tang bros craft time"] = "15minutes",
+		["nacho bros craft time"] = "30minutes",
+		["tic bros craft time"] = "30minutes",
+		["scorpi bros craft time"] = "30minutes",
+		["machine bros craft time"] = "45minutes",
+		["sammyni bros craft time"] = "45minutes",
+		["cabin bros craft time"] = "1hour",
+		["scary bros craft time"] = "1hour",
+
+		-- Best/worst bros brainrot
+		["best brainrot in bros machine"] = "scarybros",
+		["worst brainrot in bros machine"] = "noobinibros",
+		["cheapest brainrot in bros machine"] = "noobinibros",
+		["highest income bros"] = "scarybros",
+		["top brainrot bros machine"] = "scarybros",
+		["rarest brainrot bros machine"] = "scarybros",
+		["best bros brainrot"] = "scarybros",
+		["worst bros brainrot"] = "noobinibros",
+
+		-- Admin Abuse exclusives in Bros Machine
+		["dragon cannelloni"] = "dragoncannelloni",
+		["dragoncannelloni income"] = "250ms",
+		["dragon cannelloni income"] = "250ms",
+		["strawberry elephant income"] = "750ms",
+		["strawberryelephant income"] = "750ms",
+		["dragon cannelloni rarity"] = "secret",
+		["strawberry elephant rarity"] = "og",
+
+		-- Update 75 notable buffs
+		["plant bros new income"] = "350ms",
+		["plant bros income"] = "350ms",
+		["polaroidini new income"] = "300ms",
+		["draculino new income"] = "250ms",
+		["draculino income"] = "250ms",
+
+		-- Update 75 notable nerfs
+		["sammyni truckini new income"] = "87.5ms",
+		["sammyni truckini income"] = "87.5ms",
+
+		-- Release date
+		["when was update 75 released"] = "november142026",
+		["when did update 75 release"] = "november142026",
+		["update 75 release date"] = "november142026",
+		["bros machine release date"] = "november142026",
+		["when was bros machine added"] = "november142026",
+
+		-- Bros Machine trivia
+		["only machine with only bros"] = "brosmachine",
+		["machine with only bros brainrots"] = "brosmachine",
+		["second machine with only los brainrots"] = "brosmachine",
+		["how many brainrots in bros machine"] = "10",
+		["bros machine brainrot count"] = "10",
 	}
 
-	-- Inject ke INDEX (hanya jika belum ada)
+	-- Inject ke INDEX
 	for rawKey, answer in pairs(ExternalDB) do
 		local toks = tokenize(rawKey)
 		local key = table.concat(toks, " ")
