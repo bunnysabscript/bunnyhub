@@ -27,7 +27,7 @@ do
 		"CYBERCRAFTMACHINE", "SUMMERFUSE", "LOSTRADERS", "HAUNTEDFUSE", "BROSMACHINE" }
 
 	local MUTATIONS = { "GOLD", "DIAMOND", "RAINBOW", "BLOODROT", "CANDY", "LAVA", "GALAXY",
-		"YINYANG", "RADIOACTIVE", "CURSED", "DIVINE", "CYBER", "PHANTOM", "CRYSTAL", "ECLIPSE" }
+		"YINYANG", "RADIOACTIVE", "CURSED", "DIVINE", "CYBER", "PHANTOM", "CRYSTAL", "ECLIPSE", "HACKER" }
 
 	local LIMITED = {}
 	for i = 4, #MUTATIONS do LIMITED[#LIMITED + 1] = MUTATIONS[i] end
@@ -96,6 +96,10 @@ do
 	fact(function()
 		return os.date("%B")
 	end, "what is the current month|current month name|name of this month")
+	fact(function()
+		-- os.date("%A") returns full English weekday name: Monday, Tuesday... Sunday
+		return os.date("%A"):upper()
+	end, "what day is it|what day is today|today day|todays day|what day of the week is it|current day of the week|day of the week|what day are we on|what weekday is it|what weekday is today|day today|todays weekday|current weekday")
 	fact("COMMON", "common rarity|lowest rarity")
 	fact("OG", "highest rarity|rarest rarity|top rarity")
 	fact("HEADLESSHORSEMAN", "rarest|rarest brainrot|headless horseman")
@@ -123,6 +127,7 @@ do
 	fact("ECLIPSE", "eclipse|eclipse mutation|celestial|celestial mutation|black and yellow|black and yellow mutation|turns black and yellow|sun mutation|bright sun")
 	fact("CRYSTAL", "crystal|crystal mutation|purple and blue|turns purple and blue")
 	fact("PHANTOM", "phantom|phantom mutation|ghost mutation|transparent black|flashing black")
+	fact("HACKER", "hacker|hacker mutation|new mutation|newest mutation added|latest mutation added|most recent mutation added")
 	fact("FESTIVE67", "festive 67|festive67|festive sixty seven")
 	fact("BOPPINBUNNY", "boppin bunny|boppin")
 	fact("CYBER", "cyber mutation|black and blue|turns black and blue")
@@ -364,6 +369,7 @@ do
 		{ "cursed", "JANUARY", "3", "2026", "SATURDAY" }, { "divine", "FEBRUARY", "21", "2026", "SATURDAY" },
 		{ "cyber", "APRIL", "18", "2026", "SATURDAY" }, { "phantom", "JUNE", "13", "2026", "SATURDAY" },
 		{ "crystal", "JULY", "25", "2026", "SATURDAY" }, { "eclipse", "OCTOBER", "2", "2026", "FRIDAY" },
+		{ "hacker", "NOVEMBER", "14", "2026", "SATURDAY" },
 	}
 	for _, d in ipairs(MUT_DATES) do
 		eventRules(d[2], d[3], d[4], d[5], d[1], "mutation|mutations")
@@ -558,8 +564,8 @@ do
 		["fav color"] = "blue",
 		["fav food"] = "taco",
 		["fav game"] = "fortnite",
-		["fav mutation"] = "galaxy",
-		["fav mutation of sammy"] = "galaxy",
+		["fav mutation"] = "yinyang",
+		["fav mutation of sammy"] = "yinyang",
 		["fav number"] = "67",
 		["fav phone"] = "iphone",
 		["favorite artist"] = "drake",
@@ -568,7 +574,7 @@ do
 		["favorite food"] = "taco",
 		["favorite fortnite"] = "robabankobby",
 		["favorite game"] = "fortnite",
-		["favorite mutation"] = "galaxy",
+		["favorite mutation"] = "yinyang",
 		["favorite number"] = "67",
 		["favorite phone"] = "iphone",
 		["favorite singer"] = "drake",
@@ -666,7 +672,7 @@ do
 		["lafusemachine"] = "lafusemachine",
 		["last craft machine"] = "cybercraft",
 		["last fuse machine"] = "rainbowfuse",
-		["last mutation"] = "crystal",
+		["last mutation"] = "hacker",
 		["last name"] = "brakta",
 		["last ritual"] = "money",
 		["last taco brainrot"] = "latacocombinasion",
@@ -675,7 +681,7 @@ do
 		["latest brainrot"] = "hydraserpent",
 		["latest craft machine"] = "cybercraft",
 		["latest fuse machine"] = "rainbowfuse",
-		["latest mutation"] = "crystal",
+		["latest mutation"] = "hacker",
 		["latest ritual"] = "money",
 		["latest snake brainrot"] = "hydraserpent",
 		["lava mutation"] = "lava",
@@ -713,10 +719,10 @@ do
 		["my chain"] = "spyderchain",
 		["my dog"] = "rocky", ["my dog name"] = "rocky",
 		["my enemy"] = "jandel",
-		["my fav mutation"] = "galaxy",
+		["my fav mutation"] = "yinyang",
 		["my fav number"] = "67",
 		["my favorite game"] = "fortnite",
-		["my favorite mutation"] = "galaxy",
+		["my favorite mutation"] = "yinyang",
 		["my favorite number"] = "67",
 		["my favorite visual mutation for meowl"] = "cyber",
 		["my full name"] = "sammy",
@@ -767,7 +773,7 @@ do
 		["newest brainrot"] = "hydraserpent",
 		["newest craft machine"] = "cybercraft",
 		["newest fuse machine"] = "rainbowfuse",
-		["newest mutation"] = "crystal",
+		["newest mutation"] = "hacker",
 		["newest ritual"] = "money",
 		["newest snake brainrot"] = "hydraserpent",
 		["next fuse machine"] = "hauntedfuse",
@@ -788,7 +794,7 @@ do
 		["original lucky block"] = "july2025",
 		["original machine"] = "rainbowmachine",
 		["os"] = "windows11",
-		["overall favorite mutation"] = "galaxy",
+		["overall favorite mutation"] = "yinyang",
 		["owner name"] = "sammy",
 		["pants color"] = "red",
 		["person hate"] = "secretlokii",
@@ -796,6 +802,13 @@ do
 		["person sammy hates"] = "secretlokii",
 		["pet"] = "rocky", ["pet name"] = "rocky",
 		["phantom mutation"] = "phantom",
+		["hacker"] = "hacker",
+		["hacker mutation"] = "hacker",
+		["new mutation"] = "hacker",
+		["newest mutation"] = "hacker",
+		["latest mutation"] = "hacker",
+		["last mutation"] = "hacker",
+		["most recent mutation"] = "hacker",
 		["phone"] = "iphone",
 		["pink"] = "pink", ["pink egg trait"] = "pinkegg",
 		["polaroidini"] = "polaroidini",
@@ -840,10 +853,10 @@ do
 		["sammy cat"] = "nova",
 		["sammy dog"] = "rocky",
 		["sammy enemy"] = "jandel",
-		["sammy fav mutation"] = "galaxy",
+		["sammy fav mutation"] = "yinyang",
 		["sammy fav number"] = "67",
 		["sammy favorite game"] = "fortnite",
-		["sammy favorite mutation"] = "galaxy",
+		["sammy favorite mutation"] = "yinyang",
 		["sammy favorite number"] = "67",
 		["sammy first game"] = "crabgame",
 		["sammy hair color"] = "black",
@@ -869,7 +882,7 @@ do
 		["sammys dog"] = "rocky",
 		["sammys fav number"] = "67",
 		["sammys favorite game"] = "fortnite",
-		["sammys favorite mutation"] = "galaxy",
+		["sammys favorite mutation"] = "yinyang",
 		["sammys favorite number"] = "67",
 		["sammys hair color"] = "black",
 		["sammys hated group"] = "secretverse",
@@ -982,7 +995,7 @@ do
 		["what fuse machine is coming next"] = "hauntedfuse",
 		["what is coming for halloween"] = "hauntedfuse",
 		["what is my favorite game"] = "fortnite",
-		["what is my favorite mutation"] = "galaxy",
+		["what is my favorite mutation"] = "yinyang",
 		["what is my favorite number"] = "67",
 		["what is my last name"] = "brakta",
 		["what is next fuse machine"] = "hauntedfuse",
